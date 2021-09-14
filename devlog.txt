@@ -1,0 +1,32 @@
+/run print(C_LossOfControl.GetActiveLossOfControlData(1).locType)
+
+STUN_MECHANIC 昏迷
+STUN 沉睡 放逐 瘫痪 被闷棍 恐惧 魅惑
+ROOT 被定身
+POSSESS 魅惑
+FEAR_MECHANIC 恐惧
+CONFUSE 变形 迷惑
+SCHOOL_INTERRUPT 打断
+SILENCE 变形 沉默
+DISARM 缴械
+FEAR 惊骇
+
+
+
+/run print(nextTick)
+
+C_LossOfControl.GetActiveLossOfControlDataByUnit
+
+/run SendChatMessage(C_LossOfControl.GetActiveLossOfControlData(1).locType);SendChatMessage(C_LossOfControl.GetActiveLossOfControlData(1).displayText)
+
+/run SendChatMessage(C_LossOfControl.GetActiveLossOfControlDataCountByUnit("target"))
+
+/run SendChatMessage(string.format("当前移速: %d%%", select(2, GetUnitSpeed("target")) / BASE_MOVEMENT_SPEED * 100+0.5))
+
+/run print(GetUnitSpeed("target"))
+
+/run local y,n,s,_ for i=1,40 do n,_,_,_,_,_,_,s=UnitAura("target",i)if s then print(n.." on target, steal it!")y=1 end end if y~=1 then print("No stealable buffs.")end
+
+/run print(UnitDebuff("target", 1))
+
+/framestack

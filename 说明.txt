@@ -1,0 +1,108 @@
+先把目录文件放到Interface/WhitePaws里，插件选择上WhitePaws,就可以用下面的宏了
+
+以下是自己用的宏，可以抄过来直接用
+
+【猫】:
+猫输出宏需要提前准备好一个 能量转化器，黑色骨灰或者小宠物，把/施放 能量转化器 换成自己的道具
+输出系列:
+
+想自动吃药就加这几行
+/脚本 manapot({技能耗能量},'你有的药水名字')
+/施放 [form:3]奥金尼法力药水
+/施放 [form:3]超级法力药水
+/施放 [form:3]法力药水注射器
+放在第一行和下面这行中间
+/脚本 dps({技能耗能量})
+
+#showtooltip [stealth]突袭;裂伤（豹）
+/脚本 dps(40)
+/施放 能量转化器
+/施放 [nostealth]嗜血胸针
+/施放 [stealth]突袭;[form:3]裂伤（豹）;!猎豹形态
+/脚本 wcEnd()
+/startattack [nostealth]
+
+#showtooltip [stealth]毁灭;撕碎
+/脚本 dps(42)
+/施放 能量转化器
+/施放 [nostealth]嗜血胸针
+/施放 [stealth]毁灭;[form:3]撕碎;!猎豹形态
+/脚本 wcEnd()
+/startattack [nostealth]
+
+#showtooltip 割裂
+/脚本 dps(30)
+/施放 能量转化器
+/施放 [nostealth]嗜血胸针
+/施放 [form:3]割裂;!猎豹形态
+/脚本 wcEnd()
+/startattack [nostealth]
+
+#showtooltip 凶猛撕咬
+/脚本 dps(35)
+/施放 能量转化器
+/施放 [nostealth]嗜血胸针
+/施放 [form:3]凶猛撕咬;!猎豹形态
+/脚本 wcEnd()
+/startattack [nostealth]
+
+#showtooltip 割碎
+/脚本 dps(35)
+/施放 能量转化器
+/施放 [form:3]割碎;!猎豹形态
+/脚本 wcEnd()
+/stopattack [form:3]
+
+#showtooltip 畏缩
+/脚本 dps(20)
+/施放 能量转化器
+/施放 [form:3]畏缩;!猎豹形态
+/脚本 wcEnd()
+
+单纯重新变身：
+#showtooltip
+/脚本 shift()
+/施放 [nostealth]!猎豹形态
+/脚本 wcEnd()
+
+1键高能量潜行:
+#showtooltip 潜行
+/脚本 shift(nil,40,nil)
+/施放 !猎豹形态
+/施放 潜行
+/脚本 wcEnd()
+
+【熊】：
+能量够冲锋不够变身再冲锋
+#showtooltip 野性冲锋
+/脚本 shift(5)
+/施放 !巨熊形态
+/施放 野性冲锋
+/脚本 wcEnd()
+
+#showtooltip
+/脚本 hppot()
+/use 超级治疗药水
+/use 极效治疗石
+/施放 !巨熊形态
+/脚本 wcEnd()
+
+单纯重新变身
+#showtooltip
+/脚本 shift()
+/施放 !巨熊形态
+/脚本 wcEnd()
+
+点一下激怒，再点一下取消，怒气大于10直接激怒，小于10变身再激怒
+#showtooltip 激怒
+/cancelaura 激怒
+/脚本 shift(10,nil,1500)
+/施放 !巨熊形态
+/施放 激怒
+/脚本 wcEnd()
+
+旅行：
+#showtooltip
+/脚本 if GetSpellCooldown(783)>0 then SetCVar("autoUnshift",0) end
+/施放 [swimming,combat]!水栖形态;[swimming]水栖形态;[flyable,nocombat]飞行形态;[combat]!旅行形态;旅行形态
+/脚本 wcEnd()
