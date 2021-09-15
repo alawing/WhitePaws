@@ -187,7 +187,7 @@ end
 
 local controlFrame = CreateFrame('Frame')
 
-controlFrame:RegisterEvent('LOSS_OF_CONTROL_ADDED') -- the player current target recently gained or lost an aura
+controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an aura
 controlFrame:SetScript('OnEvent', GetControls)
 
 
