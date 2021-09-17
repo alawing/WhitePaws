@@ -1,3 +1,4 @@
+--09172021 1.4	飞行时自动装上飞行护符，不飞时自动换回去，白爪生日快乐！
 --09142021 1.3	加入被控喊话，分类被控，一键宏现在可以自动解定身和变形了，
 --				熊在被除了硬控之外可以正确吃药了(被晕吃药不变人,冰环能吃药)
 --09122021 1.2	优化很多手感，加入buff和被控的event
@@ -24,6 +25,7 @@ local function getLatency()
 end
 
 local clearcasting = false
+local flying = false
 
 --PowerSpark
 local nextTick
@@ -142,11 +144,6 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			end
 			i = i + 1
 		end
-		-- i = 1
-		-- while UnitDebuff('player', i) do
-		-- 	SendChatMessage(select(1, UnitDebuff('player', i))..' 类型:'..tostring(select(4, UnitDebuff('player', i))),'EMOTE')
-		-- 	i = i + 1
-		-- end
 	elseif self.rest then
 		self.rest('default', event, ...)
 		if self.druid then self.rest('druid', event, ...) end
@@ -190,6 +187,26 @@ local controlFrame = CreateFrame('Frame')
 controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an aura
 controlFrame:SetScript('OnEvent', GetControls)
 
+--触发：换过装备,变形,脱战
+local originTrinket
+
+local function changeFlyingTrinket(self, event, ...)
+	if InCombatLockdown() then return end
+	if (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) and GetInventoryItemID("player", 14) ~= 32481 then
+		originTrinket = GetInventoryItemID("player", 14)
+		EquipItemByName(32481, 14)
+	elseif GetShapeshiftFormID() ~= 27 and GetShapeshiftFormID() ~= 29 and GetInventoryItemID("player", 14) == 32481 then
+		EquipItemByName(originTrinket, 14)
+		originTrinket = nil
+	end
+end
+
+local flyingFrame = CreateFrame('Frame')
+
+flyingFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+flyingFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
+flyingFrame:RegisterEvent('PLAYER_STARTED_MOVING')
+flyingFrame:SetScript('OnEvent', changeFlyingTrinket)
 
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
