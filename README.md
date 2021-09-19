@@ -1,3 +1,5 @@
+https://www.curseforge.com/wow/addons/whitepaws
+
 Only for chinese tbc classic version
 
 1. Help with cat dps skill macro
