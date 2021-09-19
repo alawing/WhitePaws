@@ -1,6 +1,6 @@
 ## Interface: 20502
-## Title: 白爪助手1.4
-## Version: 1.4
+## Title: 白爪助手1.41
+## Version: @project-version@
 ## Author: NGA:alawing (失眠者白爪-辛迪加)
 ## Notes: 失眠者白爪辅助宏
 
