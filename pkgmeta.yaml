@@ -1,3 +1,6 @@
 ignore: # Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
     - WhitePaws.png
     - devlog.txt
+    - LICENSE
+
+manual-changelog: CHANGELOG.txt
