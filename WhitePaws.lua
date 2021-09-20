@@ -1,3 +1,24 @@
+SLASH_WCALERT1 = '/wcalert'
+
+function SlashCmdList.WCALERT(msg, editBox)
+	wcAlert = not wcAlert
+	print('当前被控通告为:'..(wcAlert and '开' or '关'))
+	print('输入/wcalert来进行开关')
+end
+
+local function wcInit()
+	if wcAlert == nil then wcAlert = true end
+	local title = select(2, GetAddOnInfo('whitepaws'))
+	print('欢迎使用'..title)
+	print('当前被控通告为:'..(wcAlert and '开' or '关'))
+	print('输入/wcalert来进行开关')
+end
+
+local initFrame = CreateFrame('Frame')
+
+initFrame:RegisterEvent('PLAYER_LOGIN')
+initFrame:SetScript('OnEvent', wcInit)
+
 local function getLatency()
 	return select(4, GetNetStats()) / 1000
 end
@@ -6,7 +27,7 @@ local clearcasting = false
 local flying = false
 
 --PowerSpark
-local nextTick
+local nextTick = 2
 local class = select(2, UnitClass('player'))
 local frame = CreateFrame('Frame')
 for _, item in pairs({
@@ -67,8 +88,8 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			end
 			power:HookScript('OnUpdate', function(self)
 				local now = GetTime()
-				if now < self.rate then return end
 				nextTick = 2 - mod(now - self.timer, 2) - getLatency()
+				if now < self.rate then return end
 				self.rate = now + 0.02 --刷新率
 				if self.hide(self.key) then
 					self.spark:SetAlpha(0)
@@ -140,7 +161,9 @@ local function GetControls(self, event, ...)
 		local locType = C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType
 		if locType == 'ROOT' or locType == 'CONFUSE' and C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText == '变形' then
 			rooted = true
-			SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',能解吗？能解，所以问题不大', 'EMOTE')
+			if wcAlert then
+				SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',能解吗？能解，所以问题不大', 'EMOTE')
+			end
 		elseif locType == 'STUN_MECHANIC' or
 			locType == 'STUN' or
 			locType == 'POSSESS' or
@@ -148,13 +171,19 @@ local function GetControls(self, event, ...)
 			locType == 'CONFUSE' or
 			locType == 'FEAR' then
 			strongControl = true
-			SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',能解吗？不能解,但是可以忍过去,所以问题不大', 'EMOTE')
+			if wcAlert then
+				SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',能解吗？不能解,但是可以忍过去,所以问题不大', 'EMOTE')
+			end
 		elseif locType == 'SCHOOL_INTERRUPT' or
 			locType == 'SILENCE' or
 			locType == 'DISARM' then
-			SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',能解吗？不能解,但是不是硬控,所以问题不大', 'EMOTE')
+				if wcAlert then
+					SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',能解吗？不能解,但是不是硬控,所以问题不大', 'EMOTE')
+				end
 		else
-			SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',新的控制技能？', 'EMOTE')
+			if wcAlert then
+				SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',新的控制技能？', 'EMOTE')
+			end
 		end
 		eventIndex = eventIndex - 1
 	end
@@ -162,11 +191,10 @@ end
 
 local controlFrame = CreateFrame('Frame')
 
-controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an aura
+controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an control
 controlFrame:SetScript('OnEvent', GetControls)
 
 --触发：换过装备,变形,脱战
-local originTrinket
 
 local function changeFlyingTrinket(self, event, ...)
 	if InCombatLockdown() then return end
