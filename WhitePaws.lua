@@ -200,6 +200,7 @@ local function changeMountedTrinket(self, event, ...)
     if InCombatLockdown() then return end
     if IsMounted() and GetInventoryItemID("player",13) ~= GetItemInfoInstant("马鞭") and GetInventoryItemID("player",14) ~= GetItemInfoInstant("马鞭") then
         MountedOriginTrinket = GetInventoryItemID("player",14)
+	FlyingOriginTrinket = GetInventoryItemID("player",14)
         EquipItemByName("马鞭",14)
     elseif not IsMounted() and GetInventoryItemID("player",14) == GetItemInfoInstant("马鞭") then
         EquipItemByName(MountedOriginTrinket,14)
