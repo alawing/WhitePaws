@@ -195,24 +195,52 @@ controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current targe
 controlFrame:SetScript('OnEvent', GetControls)
 
 --触发：换过装备,变形,脱战
-
-local function changeFlyingTrinket(self, event, ...)
-	if InCombatLockdown() then return end
-	if (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) and GetInventoryItemID("player", 14) ~= 32481 then
-		originTrinket = GetInventoryItemID("player", 14)
-		EquipItemByName(32481, 14)
-	elseif GetShapeshiftFormID() ~= 27 and GetShapeshiftFormID() ~= 29 and GetInventoryItemID("player", 14) == 32481 then
-		EquipItemByName(originTrinket, 14)
-		originTrinket = nil
-	end
+--上坐骑自动换饰品
+local function changeMountedTrinket(self, event, ...)
+    if InCombatLockdown() then return end
+    if IsMounted() and GetInventoryItemID("player",13) ~= GetItemInfoInstant("马鞭") and GetInventoryItemID("player",14) ~= GetItemInfoInstant("马鞭") then
+        MountedOriginTrinket = GetInventoryItemID("player",14)
+        EquipItemByName("马鞭",14)
+    elseif not IsMounted() and GetInventoryItemID("player",14) == GetItemInfoInstant("马鞭") then
+        EquipItemByName(MountedOriginTrinket,14)
+        MountedOriginTrinket = nil
+    end
 end
 
-local flyingFrame = CreateFrame('Frame')
+local mountedFrame = CreateFrame("FRAME", nil)
+mountedFrame:RegisterEvent("PLAYER_STARTED_MOVING")
+mountedFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
+mountedFrame:RegisterEvent("UNIT_AURA")
+mountedFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+mountedFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
+mountedFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+mountedFrame:SetScript("OnEvent", changeMountedTrinket)
 
-flyingFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-flyingFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
-flyingFrame:RegisterEvent('PLAYER_STARTED_MOVING')
-flyingFrame:SetScript('OnEvent', changeFlyingTrinket)
+--变飞行形态自动换饰品
+
+local function changeFlyingTrinket(self, event, ...)
+    if InCombatLockdown() then return end
+    if (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) and GetInventoryItemID("player",13) ~= GetItemInfoInstant("迅捷飞行符咒") and GetInventoryItemID("player",14) ~= GetItemInfoInstant("迅捷飞行符咒") then
+        if MountedOriginTrinket ~= nil and MountedOriginTrinket ~= GetItemInfoInstant("马鞭") then FlyingOriginTrinket = MountedOriginTrinket
+        elseif GetInventoryItemID("player",14) ~= GetItemInfoInstant("马鞭") then FlyingOriginTrinket = GetInventoryItemID("player",14)
+        end
+        EquipItemByName("迅捷飞行符咒",14)
+    elseif GetShapeshiftFormID() ~= 27 and GetShapeshiftFormID() ~= 29 and GetInventoryItemID("player",14) == GetItemInfoInstant("迅捷飞行符咒") then
+        EquipItemByName(FlyingOriginTrinket,14)
+        FlyingOriginTrinket = nil
+    end
+end
+
+local flyingFrame = CreateFrame("FRAME", nil)
+
+flyingFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+flyingFrame:RegisterEvent("PLAYER_STARTED_MOVING")
+flyingFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
+flyingFrame:RegisterEvent("UNIT_AURA")
+flyingFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+flyingFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
+flyingFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+flyingFrame:SetScript("OnEvent", changeFlyingTrinket)
 
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
