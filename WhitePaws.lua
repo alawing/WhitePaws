@@ -194,54 +194,42 @@ local controlFrame = CreateFrame('Frame')
 controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an control
 controlFrame:SetScript('OnEvent', GetControls)
 
---触发：换过装备,变形,脱战
---上坐骑自动换饰品
-local function changeMountedTrinket(self, event, ...)
-    if InCombatLockdown() then return end
-    if IsMounted() and GetInventoryItemID("player",13) ~= GetItemInfoInstant("马鞭") and GetInventoryItemID("player",14) ~= GetItemInfoInstant("马鞭") then
-        MountedOriginTrinket = GetInventoryItemID("player",14)
-	FlyingOriginTrinket = GetInventoryItemID("player",14)
-        EquipItemByName("马鞭",14)
-    elseif not IsMounted() and GetInventoryItemID("player",14) == GetItemInfoInstant("马鞭") then
-        EquipItemByName(MountedOriginTrinket,14)
-        MountedOriginTrinket = nil
-    end
+--触发：变形,移动,BUFF,换过装备,变形,脱战
+--上坐骑或飞行自动换饰品
+--马鞭: 25653 迅捷飞行符咒: 32481
+local function changeBoostTrinket(self, event, ...)
+	if InCombatLockdown() return end
+	if IsMounted() then
+		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
+        	if GetInventoryItemID('player', 14) ~= 32481 then
+				OriginTrinket = GetInventoryItemID('player', 14)
+			end
+			EquipItemByName(25653, 14)
+		end
+	elseif (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
+		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
+        	if GetInventoryItemID('player', 14) ~= 25653 then
+				OriginTrinket = GetInventoryItemID('player', 14)
+			end
+			EquipItemByName(32481, 14)
+		end
+	elseif GetInventoryItemID('player', 14) == 25653 or GetInventoryItemID('player' ,14) == 32481 then
+        if OriginTrinket ~= nil then
+			EquipItemByName(OriginTrinket, 14)
+		end
+        OriginTrinket = nil
+	end
 end
 
-local mountedFrame = CreateFrame("FRAME", nil)
-mountedFrame:RegisterEvent("PLAYER_STARTED_MOVING")
-mountedFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
-mountedFrame:RegisterEvent("UNIT_AURA")
-mountedFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-mountedFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
-mountedFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-mountedFrame:SetScript("OnEvent", changeMountedTrinket)
-
---变飞行形态自动换饰品
-
-local function changeFlyingTrinket(self, event, ...)
-    if InCombatLockdown() then return end
-    if (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) and GetInventoryItemID("player",13) ~= GetItemInfoInstant("迅捷飞行符咒") and GetInventoryItemID("player",14) ~= GetItemInfoInstant("迅捷飞行符咒") then
-        if MountedOriginTrinket ~= nil and MountedOriginTrinket ~= GetItemInfoInstant("马鞭") then FlyingOriginTrinket = MountedOriginTrinket
-        elseif GetInventoryItemID("player",14) ~= GetItemInfoInstant("马鞭") then FlyingOriginTrinket = GetInventoryItemID("player",14)
-        end
-        EquipItemByName("迅捷飞行符咒",14)
-    elseif GetShapeshiftFormID() ~= 27 and GetShapeshiftFormID() ~= 29 and GetInventoryItemID("player",14) == GetItemInfoInstant("迅捷飞行符咒") then
-        EquipItemByName(FlyingOriginTrinket,14)
-        FlyingOriginTrinket = nil
-    end
-end
-
-local flyingFrame = CreateFrame("FRAME", nil)
-
-flyingFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-flyingFrame:RegisterEvent("PLAYER_STARTED_MOVING")
-flyingFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
-flyingFrame:RegisterEvent("UNIT_AURA")
-flyingFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-flyingFrame:RegisterEvent("PLAYER_LEAVE_COMBAT")
-flyingFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-flyingFrame:SetScript("OnEvent", changeFlyingTrinket)
+local boostFrame = CreateFrame('frame')
+boostFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+boostFrame:RegisterEvent('PLAYER_STARTED_MOVING')
+boostFrame:RegisterEvent('PLAYER_STOPPED_MOVING')
+boostFrame:RegisterEvent('UNIT_AURA')
+boostFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
+boostFrame:RegisterEvent('PLAYER_REGEN_ENABLED') --比PLAYER_LEAVE_COMBAT更精确的脱战
+boostFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+boostFrame:SetScript('OnEvent', changeBoostTrinket)
 
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
