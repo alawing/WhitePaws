@@ -198,7 +198,7 @@ controlFrame:SetScript('OnEvent', GetControls)
 --上坐骑或飞行自动换饰品
 --马鞭: 25653 迅捷飞行符咒: 32481
 local function changeBoostTrinket(self, event, ...)
-	if InCombatLockdown() return end
+	if InCombatLockdown() then return end
 	if IsMounted() then
 		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
         	if GetInventoryItemID('player', 14) ~= 32481 then
