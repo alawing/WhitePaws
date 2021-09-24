@@ -88,7 +88,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			end
 			power:HookScript('OnUpdate', function(self)
 				local now = GetTime()
-				nextTick = 2 - mod(now - self.timer, 2) - getLatency()
+				nextTick = 2 - mod(now - self.timer, 2)
 				if now < self.rate then return end
 				self.rate = now + 0.02 --刷新率
 				if self.hide(self.key) then
@@ -98,7 +98,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (self.wait - now) / 5, 0)
 				elseif self.timer then
 					self.spark:SetAlpha(1)
-					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (mod(now - self.timer + getLatency(), self.interval) / self.interval), 0)
+					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (mod(now - self.timer, self.interval) / self.interval), 0)
 				end
 			end)
 			self[key] = power
@@ -194,25 +194,41 @@ local controlFrame = CreateFrame('Frame')
 controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an control
 controlFrame:SetScript('OnEvent', GetControls)
 
---触发：换过装备,变形,脱战
-
-local function changeFlyingTrinket(self, event, ...)
+--触发：变形,移动,BUFF,换过装备,变形,脱战
+--上坐骑或飞行自动换饰品
+--马鞭: 25653 迅捷飞行符咒: 32481
+local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
-	if (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) and GetInventoryItemID("player", 14) ~= 32481 then
-		originTrinket = GetInventoryItemID("player", 14)
-		EquipItemByName(32481, 14)
-	elseif GetShapeshiftFormID() ~= 27 and GetShapeshiftFormID() ~= 29 and GetInventoryItemID("player", 14) == 32481 then
-		EquipItemByName(originTrinket, 14)
-		originTrinket = nil
+	if IsMounted() then
+		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
+        	if GetInventoryItemID('player', 14) ~= 32481 then
+				originTrinket = GetInventoryItemID('player', 14)
+			end
+			EquipItemByName(25653, 14)
+		end
+	elseif (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
+		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
+        	if GetInventoryItemID('player', 14) ~= 25653 then
+				originTrinket = GetInventoryItemID('player', 14)
+			end
+			EquipItemByName(32481, 14)
+		end
+	elseif GetInventoryItemID('player', 14) == 25653 or GetInventoryItemID('player' ,14) == 32481 then
+        if originTrinket ~= nil then
+			EquipItemByName(originTrinket, 14)
+		end
 	end
 end
 
-local flyingFrame = CreateFrame('Frame')
-
-flyingFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-flyingFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
-flyingFrame:RegisterEvent('PLAYER_STARTED_MOVING')
-flyingFrame:SetScript('OnEvent', changeFlyingTrinket)
+local boostFrame = CreateFrame('frame')
+boostFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+boostFrame:RegisterEvent('PLAYER_STARTED_MOVING')
+boostFrame:RegisterEvent('PLAYER_STOPPED_MOVING')
+boostFrame:RegisterEvent('UNIT_AURA')
+boostFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
+boostFrame:RegisterEvent('PLAYER_REGEN_ENABLED') --比PLAYER_LEAVE_COMBAT更精确的脱战
+boostFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+boostFrame:SetScript('OnEvent', changeBoostTrinket)
 
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
@@ -242,10 +258,7 @@ local function getEnergy()
 	if GetShapeshiftForm() ~= 3 then
 		return 0
 	end
-	local trueEnergy = UnitPower('player', 3)
-	if nextTick <= 0 then trueEnergy = trueEnergy + 20 end
-	if trueEnergy > 100 then trueEnergy = 100 end
-	return trueEnergy
+	return UnitPower('player', 3)
 end
 
 local function getBuff(name)
@@ -277,8 +290,10 @@ local function enoughEnergywithNextTick(cost)
 	if clearcasting then
 		return true
 	end
-	if getEnergy() >= cost then return true end
-	if getEnergy() + 20 >= cost and nextTick <= 1.5 then return true end
+	local e = getEnergy()
+	if nextTick + getLatency() >= 2 or nextTick - getLatency() <= 0 then e = e + 20 end
+	if e >= cost then return true end
+	if e + 20 >= cost and nextTick - getLatency() <= 1.5 then return true end
 	return false
 end
 
