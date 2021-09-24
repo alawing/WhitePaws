@@ -202,20 +202,20 @@ local function changeBoostTrinket(self, event, ...)
 	if IsMounted() then
 		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
         	if GetInventoryItemID('player', 14) ~= 32481 then
-				OriginTrinket = GetInventoryItemID('player', 14)
+				originTrinket = GetInventoryItemID('player', 14)
 			end
 			EquipItemByName(25653, 14)
 		end
 	elseif (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
 		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
         	if GetInventoryItemID('player', 14) ~= 25653 then
-				OriginTrinket = GetInventoryItemID('player', 14)
+				originTrinket = GetInventoryItemID('player', 14)
 			end
 			EquipItemByName(32481, 14)
 		end
 	elseif GetInventoryItemID('player', 14) == 25653 or GetInventoryItemID('player' ,14) == 32481 then
-        if OriginTrinket ~= nil then
-			EquipItemByName(OriginTrinket, 14)
+        if originTrinket ~= nil then
+			EquipItemByName(originTrinket, 14)
 		end
 	end
 end
