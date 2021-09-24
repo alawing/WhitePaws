@@ -359,8 +359,9 @@ function manapotx(cost, name)
 end
 
 --吃红
+--9634巨熊形态
 function hppot()
-	local u,n = IsUsableSpell('巨熊形态')
+	local u,n = IsUsableSpell(9634)
 	if getShiftGCD() or strongControl or not u
 		then SetCVar('autoUnshift', 0)
 	else
