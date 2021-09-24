@@ -88,7 +88,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			end
 			power:HookScript('OnUpdate', function(self)
 				local now = GetTime()
-				nextTick = 2 - mod(now - self.timer, 2) - getLatency()
+				nextTick = 2 - mod(now - self.timer, 2)
 				if now < self.rate then return end
 				self.rate = now + 0.02 --刷新率
 				if self.hide(self.key) then
@@ -98,7 +98,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (self.wait - now) / 5, 0)
 				elseif self.timer then
 					self.spark:SetAlpha(1)
-					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (mod(now - self.timer + getLatency(), self.interval) / self.interval), 0)
+					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (mod(now - self.timer, self.interval) / self.interval), 0)
 				end
 			end)
 			self[key] = power
@@ -217,7 +217,6 @@ local function changeBoostTrinket(self, event, ...)
         if OriginTrinket ~= nil then
 			EquipItemByName(OriginTrinket, 14)
 		end
-        OriginTrinket = nil
 	end
 end
 
@@ -259,10 +258,7 @@ local function getEnergy()
 	if GetShapeshiftForm() ~= 3 then
 		return 0
 	end
-	local trueEnergy = UnitPower('player', 3)
-	if nextTick <= 0 then trueEnergy = trueEnergy + 20 end
-	if trueEnergy > 100 then trueEnergy = 100 end
-	return trueEnergy
+	return UnitPower('player', 3)
 end
 
 local function getBuff(name)
@@ -294,8 +290,10 @@ local function enoughEnergywithNextTick(cost)
 	if clearcasting then
 		return true
 	end
-	if getEnergy() >= cost then return true end
-	if getEnergy() + 20 >= cost and nextTick <= 1.5 then return true end
+	local e = getEnergy()
+	if nextTick + getLatency() >= 2 or nextTick - getLatency() <= 0 then e = e + 20 end
+	if e >= cost then return true end
+	if e + 20 >= cost and nextTick - getLatency() <= 1.5 then return true end
 	return false
 end
 
