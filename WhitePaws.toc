@@ -4,7 +4,7 @@
 ## Author: NGA:alawing (失眠者白爪-辛迪加)
 ## Notes: 失眠者白爪辅助宏
 ## SavedVariablesPerCharacter: PowerSparkDB
-## SavedVariablesPerCharacter: MountedOriginTrinket,FlyingOriginTrinket
+## SavedVariablesPerCharacter: OriginTrinket
 ## SavedVariablesPerCharacter: wcAlert
 
 WhitePaws.lua
