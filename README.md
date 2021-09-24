@@ -10,7 +10,7 @@ conditions:energy, mana, next tick time, been rooted, or strong control like stu
 Can make macro let bear use pots and protect shifting to human. (gcd or strong control like stun, fear)
 Can make macro let bear auto shift if not enough rage.
 
-3. Auto equip speed up trinket when flying, equip back when not flying
+3. Auto equip speed up trinket when flying/mounting, equip back when not flying/mounting
 
 4. Tells if been control, input /wcalert to switch on/off this notice
 
@@ -25,7 +25,7 @@ Can make macro let bear auto shift if not enough rage.
 帮助写出不变人的吃药宏（预防公共cd或者晕恐惧之类硬控）
 帮助写出宏让熊在不够能量时重新变身
 
-3.飞行时自动装飞行饰品,不飞时装回
+3.飞行/坐骑时自动装加速饰品,不飞时装回
 
 4.被控时会提示 输入/wcalert来进行开关
 
