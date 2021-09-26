@@ -7,7 +7,7 @@ function SlashCmdList.WCALERT(msg, editBox)
 end
 
 local function wcInit()
-	if wcAlert == nil then wcAlert = true end
+	wcAlert = wcAlert or true
 	local title = select(2, GetAddOnInfo('whitepaws'))
 	print('欢迎使用'..title)
 	print('当前被控通告为:'..(wcAlert and '开' or '关'))
@@ -327,12 +327,12 @@ end
 
 --变身
 function shift(r, e, m)
-	if r == nil then r = 200 end
-	if e == nil then e = 200 end
-	if getShiftGCD() or not enoughMana(m) or getRage() >= r or getEnergy() >= e then
-		SetCVar('autoUnshift', 0)
-	else
+	r = r or 200
+	e = e or 200
+	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted or not enoughRage(r) and not enoughEnergy(e)) then
 		SetCVar('autoUnshift', 1)
+	else
+		SetCVar('autoUnshift', 0)
 	end
 end
 
@@ -363,15 +363,6 @@ end
 function hppot()
 	local u,n = IsUsableSpell(9634)
 	if getShiftGCD() or strongControl or not u
-		then SetCVar('autoUnshift', 0)
-	else
-		SetCVar('autoUnshift', 1)
-	end
-end
-
---自动解控
-function unroot()
-	if  getShiftGCD() or strongControl or not rooted or not enoughMana()
 		then SetCVar('autoUnshift', 0)
 	else
 		SetCVar('autoUnshift', 1)
