@@ -375,3 +375,59 @@ function wcEnd()
 	SetCVar('autoUnshift', 1)
 	UIErrorsFrame:Clear()
 end
+
+--检测哪个背包有空格，有则取下身上的装备
+--默认取下的装备部位是神像，神像的slotID是18
+local function UnequipSlot(slotId)
+    local slotId = slotId or 18
+    local emptybag, bag = nil
+    for bag = 4, 0, -1 do
+        for slot = 1, GetContainerNumSlots(bag) do
+            local link = GetContainerItemLink(bag, slot)
+            if link == nil then
+                emptybag = bag
+            end
+        end
+    end
+    if emptybag ~= 0 then
+        PickupInventoryItem(slotId)
+        local bagID = emptybag + 19
+        PutItemInBag(bagID)
+    elseif emptybag == 0 then
+        PickupInventoryItem(slotId)
+        PutItemInBackpack()
+    end
+end
+
+--检测蓝龙光环和法链CD
+--法链的itemID是28370
+local function isBlueDragon()
+    if GetInventoryItemID('player', 13) ~= 28370 and GetInventoryItemID('player', 14) ~= 28370 then
+        return
+    end
+
+    local i = 1
+    while i <= 32 do
+        if GetItemCooldown(28370) == 0 and UnitBuff("player",i) == "蓝龙光环" then
+            return true
+        end
+        i = i + 1
+    end
+end
+
+--触发蓝龙且法链不在CD则卸下神像
+--神像的slotID是18
+local function UnequipIdolforBlueDragon()
+    if not IsInInstance() then return end --不在副本中则不卸下神像
+    if not InCombatLockdown() then return end --不在战斗中则不卸下神像
+    if isBlueDragon() then
+        UnequipSlot(18)
+    end
+end
+
+local bluedragonFrame = CreateFrame('frame')
+bluedragonFrame:RegisterEvent('UNIT_AURA')
+bluedragonFrame:RegisterEvent('PLAYER_STARTED_MOVING')
+bluedragonFrame:RegisterEvent('PLAYER_STOPPED_MOVING')
+bluedragonFrame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED')
+bluedragonFrame:SetScript('OnEvent', UnequipIdolforBlueDragon)
