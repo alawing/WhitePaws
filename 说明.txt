@@ -101,6 +101,29 @@
 /施放 激怒
 /脚本 wcEnd()
 
+熊输出宏，自动解定身,其他技能可以把技能名字改 割伤 横扫 精灵之火（野性） 挫志咆哮
+#showtooltip
+/脚本 unroot()
+/施放 能量转化器
+/施放 [form:1]裂伤（熊）;!巨熊形态
+/脚本 wcEnd()
+/startattack
+
+重殴因为没gcd是这样
+#showtooltip
+/脚本 unroot()
+/施放 !巨熊形态
+/施放 [form:1]重殴
+/脚本 wcEnd()
+/startattack
+
+如果输出宏想没怒气时骗怒气
+#showtooltip下面那行加上
+/脚本 shift(10)
+如果想设置最低蓝比如，1500蓝一下就不骗怒气了就是
+/脚本 shift(10,nil,1500)
+
+
 旅行：
 #showtooltip
 /脚本 if GetSpellCooldown(783)>0 then SetCVar("autoUnshift",0) end

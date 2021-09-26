@@ -369,6 +369,15 @@ function hppot()
 	end
 end
 
+--自动解控
+function unroot()
+	if  getShiftGCD() or strongControl or not rooted or not enoughMana()
+		then SetCVar('autoUnshift', 0)
+	else
+		SetCVar('autoUnshift', 1)
+	end
+end
+
 --结束
 function wcEnd()
 	SetCVar('autoUnshift', 1)
