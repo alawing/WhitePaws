@@ -25,9 +25,9 @@ end
 
 local clearcasting = false
 local flying = false
+local nextTick = 2
 
 --PowerSpark
-local nextTick = 2
 local class = select(2, UnitClass('player'))
 local frame = CreateFrame('Frame')
 for _, item in pairs({
@@ -150,6 +150,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 end)
 --End of PowerSpark
 
+--判断控制
 local strongControl, rooted
 
 local function GetControls(self, event, ...)
@@ -220,7 +221,7 @@ local function changeBoostTrinket(self, event, ...)
 	end
 end
 
-local boostFrame = CreateFrame('frame')
+local boostFrame = CreateFrame('Frame')
 boostFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
 boostFrame:RegisterEvent('PLAYER_STARTED_MOVING')
 boostFrame:RegisterEvent('PLAYER_STOPPED_MOVING')
@@ -243,7 +244,7 @@ local function getShiftLeftTime()
 end
 
 local function ableShift()
-	return getShiftLeftTime() <= getLatency()
+	return getShiftLeftTime() <= getLatency() / 2
 end
 
 local function getMana()
@@ -291,9 +292,9 @@ local function enoughEnergywithNextTick(cost)
 		return true
 	end
 	local e = getEnergy()
-	if nextTick + getLatency() >= 2 or nextTick - getLatency() <= 0 then e = e + 20 end
+	if nextTick + getLatency() / 2 >= 2 or nextTick - getLatency() / 2 <= 0 then e = e + 20 end
 	if e >= cost then return true end
-	if e + 20 >= cost and nextTick - getLatency() <= 1.5 then return true end
+	if e + 20 >= cost and nextTick - getLatency() / 2 <= 1.5 then return true end
 	return false
 end
 
@@ -308,7 +309,7 @@ end
 
 --输出，考虑延迟
 function dps(cost)
-	if not strongControl and enoughMana() and (rooted or ableShift() and not enoughEnergywithNextTick(cost)) then
+	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -317,7 +318,7 @@ end
 
 --老款输出，不考虑延迟
 function dpsx(cost)
-	if not strongControl and enoughMana() and (rooted or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
+	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -329,7 +330,7 @@ end
 function shift(r, e, m)
 	r = r or 200
 	e = e or 200
-	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted or not enoughRage(r) and not enoughEnergy(e)) then
+	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or not enoughRage(r) and not enoughEnergy(e)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -338,9 +339,7 @@ end
 
 --吃蓝，考虑延迟
 function manapot(cost, name)
-	local itemId = GetItemInfoInstant(name)
-	local level=UnitLevel('target')
-	if level ~= -1 or not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(itemId) > 0 then
+	if UnitLevel('target') ~= -1 or not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 then
 		SetCVar('autoUnshift', 0)
 	else
 		SetCVar('autoUnshift', 1)
@@ -349,9 +348,7 @@ end
 
 --老款吃蓝，不考虑延迟
 function manapotx(cost, name)
-	local itemId = GetItemInfoInstant(name)
-	local level=UnitLevel('target')
-	if level ~= -1 or getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(itemId) > 0 then
+	if UnitLevel('target') ~= -1 or getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 then
 		SetCVar('autoUnshift', 0)
 	else
 		SetCVar('autoUnshift', 1)
