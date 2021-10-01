@@ -7,7 +7,7 @@ function SlashCmdList.WCALERT(msg, editBox)
 end
 
 local function wcInit()
-	wcAlert = wcAlert or true
+	wcAlert = wcAlert or false
 	local title = select(2, GetAddOnInfo('whitepaws'))
 	print('欢迎使用'..title)
 	print('当前被控通告为:'..(wcAlert and '开' or '关'))

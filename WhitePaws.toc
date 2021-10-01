@@ -5,6 +5,6 @@
 ## Notes: 失眠者白爪辅助宏
 ## SavedVariablesPerCharacter: PowerSparkDB
 ## SavedVariablesPerCharacter: originTrinket
-## SavedVariablesPerCharacter: wcAlert
+## SavedVariables: wcAlert
 
 WhitePaws.lua
