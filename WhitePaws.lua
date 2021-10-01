@@ -200,7 +200,7 @@ controlFrame:SetScript('OnEvent', GetControls)
 --马鞭: 25653 迅捷飞行符咒: 32481
 local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
-	if IsMounted() then
+	if IsMounted() and not UnitOnTaxi("player") then
 		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
         	if GetInventoryItemID('player', 14) ~= 32481 then
 				originTrinket = GetInventoryItemID('player', 14)
