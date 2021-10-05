@@ -222,6 +222,7 @@ local function changeBoostTrinket(self, event, ...)
 end
 
 local boostFrame = CreateFrame('Frame')
+boostFrame:RegisterEvent('PLAYER_MOUNT_DISPLAY_CHANGED')
 boostFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
 boostFrame:RegisterEvent('PLAYER_STARTED_MOVING')
 boostFrame:RegisterEvent('PLAYER_STOPPED_MOVING')
