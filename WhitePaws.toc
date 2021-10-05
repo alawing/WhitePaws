@@ -6,5 +6,6 @@
 ## SavedVariablesPerCharacter: PowerSparkDB
 ## SavedVariablesPerCharacter: originTrinket
 ## SavedVariables: wcAlert
+## SavedVariables: wpIsInInstance
 
 WhitePaws.lua
