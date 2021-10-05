@@ -1,7 +1,3 @@
-SlashCmdList["WHITEPAWS"] = WhitePaws_Command
-SLASH_WHITEPAWS1 = '/whitepaws'
-SLASH_WHITEPAWS2 = '/wp'
-
 local function WhitePaws_Command(arg1)
 	arg1 = strlower(arg1)
 	if arg1 == "alert" then
@@ -26,6 +22,10 @@ local function WhitePaws_Command(arg1)
 		print('/wp help    查看命令帮助')
 	end
 end
+
+SlashCmdList["WHITEPAWS"] = WhitePaws_Command
+SLASH_WHITEPAWS1 = '/whitepaws'
+SLASH_WHITEPAWS2 = '/wp'
 
 SLASH_WCALERT1 = '/wcalert'
 
