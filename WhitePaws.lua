@@ -8,10 +8,22 @@ local function WhitePaws_Command(arg1)
 		wcAlert = not wcAlert
 		print('当前被控通告为:'..(wcAlert and '开' or '关'))
 		print('输入/wcalert或/wp alert来进行开关')
+		print('输入/wp help查看命令帮助')
 	elseif arg1 == "bg" then
 		wpIsInInstance = not wpIsInInstance
 		print('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'))
 		print('输入/wp bg来进行开关')
+		print('输入/wp help查看命令帮助')
+	elseif arg1 == "show" then
+		print('当前被控通告为:'..(wcAlert and '开' or '关'))
+		print('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'))
+		print('输入/wp help查看命令帮助')
+	elseif arg1 == "help" then
+		print('/wcalert    开关被控通告功能')
+		print('/wp alert   开关被控通告功能')
+		print('/wp bg      开关副本/战场内自动马鞭功能')
+		print('/wp show    显示当前被控通告和自动马鞭功能的开关状态')
+		print('/wp help    查看命令帮助')
 	end
 end
 
@@ -21,6 +33,7 @@ function SlashCmdList.WCALERT(msg, editBox)
 	wcAlert = not wcAlert
 	print('当前被控通告为:'..(wcAlert and '开' or '关'))
 	print('输入/wcalert来进行开关')
+	print('输入/wp help查看命令帮助')
 end
 
 local function wcInit()
@@ -30,6 +43,7 @@ local function wcInit()
 	print('欢迎使用'..title)
 	print('当前被控通告为:'..(wcAlert and '开' or '关'))
 	print('输入/wcalert来进行开关')
+	print('输入/wp help查看命令帮助')
 end
 
 local initFrame = CreateFrame('Frame')
