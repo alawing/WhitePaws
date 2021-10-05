@@ -1,3 +1,20 @@
+SlashCmdList["WHITEPAWS"] = WhitePaws_Command
+SLASH_WHITEPAWS1 = '/whitepaws'
+SLASH_WHITEPAWS2 = '/wp'
+
+local function WhitePaws_Command(arg1)
+	arg1 = strlower(arg1)
+	if arg1 == "alert" then
+		wcAlert = not wcAlert
+		print('当前被控通告为:'..(wcAlert and '开' or '关'))
+		print('输入/wcalert或/wp alert来进行开关')
+	elseif arg1 == "bg" then
+		wpIsInInstance = not wpIsInInstance
+		print('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'))
+		print('输入/wp bg来进行开关')
+	end
+end
+
 SLASH_WCALERT1 = '/wcalert'
 
 function SlashCmdList.WCALERT(msg, editBox)
@@ -8,6 +25,7 @@ end
 
 local function wcInit()
 	wcAlert = wcAlert or false
+	wpIsInInstance = wpIsInInstance or false
 	local title = select(2, GetAddOnInfo('whitepaws'))
 	print('欢迎使用'..title)
 	print('当前被控通告为:'..(wcAlert and '开' or '关'))
@@ -200,6 +218,7 @@ controlFrame:SetScript('OnEvent', GetControls)
 --马鞭: 25653 迅捷飞行符咒: 32481
 local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
+	if IsInInstance() and not wpIsInInstance then return end
 	if IsMounted() and not UnitOnTaxi("player") then
 		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
         	if GetInventoryItemID('player', 14) ~= 32481 then
@@ -230,6 +249,64 @@ boostFrame:RegisterEvent('PLAYER_EQUIPMENT_CHANGED')
 boostFrame:RegisterEvent('PLAYER_REGEN_ENABLED') --比PLAYER_LEAVE_COMBAT更精确的脱战
 boostFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 boostFrame:SetScript('OnEvent', changeBoostTrinket)
+
+--点击飞行点地图时自动取消变形
+local function autoUnshift()
+    local texture_str = "Interface\\TARGETINGFRAME\\UI-StatusBar"
+    if InCombatLockdown() then return end
+    if not autoUnshiftFrame then
+        autoUnshiftFrame = CreateFrame("Button", "unshiftMacroButton", UIParent, "SecureActionButtonTemplate")
+        autoUnshiftFrame:SetAttribute("type1", "macro")
+        autoUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoUnshiftFrame:Hide()')
+        autoUnshiftFrame.bg = autoUnshiftFrame:CreateTexture(nil,"BACKGROUND", nil, -5)
+        autoUnshiftFrame.bg:SetTexture(texture_str)
+        autoUnshiftFrame.bg:SetVertexColor(0.2,0.1,0,0.0)
+        autoUnshiftFrame.bg:SetAllPoints(autoUnshiftFrame)
+        autoUnshiftFrame:SetParent(TaxiRouteMap)
+        autoUnshiftFrame:SetAllPoints(TaxiRouteMap)
+        autoUnshiftFrame:SetSize(320,350)
+        autoUnshiftFrame:SetPoint("TOPLEFT",0,0)
+        autoUnshiftFrame:EnableMouse(true)
+        autoUnshiftFrame:SetFrameLevel(3)
+        autoUnshiftFrame.tip = CreateFrame("GameTooltip","autoUnshiftTooltip",nil,"GameTooltipTemplate")
+        autoUnshiftFrame.tip:SetAllPoints(autoUnshiftFrame)
+        autoUnshiftFrame:SetScript("OnEnter",function(self)
+            autoUnshiftFrame.tip:SetOwner(self,"ANCHOR_CURSOR")
+            autoUnshiftFrame.tip:AddLine("点击飞行点地图可以解除变形")
+            autoUnshiftFrame.tip:Show()
+        end)
+        autoUnshiftFrame:SetScript("OnLeave",function(self)
+            autoUnshiftFrame.tip:Hide()
+        end)
+        return
+    elseif GetShapeshiftFormID() then
+        autoUnshiftFrame:Show()
+        autoUnshiftFrame.tip:Show()
+        return
+    end
+    autoUnshiftFrame:Hide()
+    autoUnshiftFrame.tip:Hide()
+end
+
+--打开飞行点地图时自动下马
+local function autoDismount()
+    if InCombatLockdown() then return end
+    if NumTaxiNodes() == 0 then return end
+    if IsMounted() then
+        Dismount()
+    end
+    if GetShapeshiftFormID() then
+        autoUnshift()
+    elseif not GetShapeshiftFormID() then
+        autoUnshiftFrame:Hide()
+        autoUnshiftFrame.tip:Hide()
+    end
+end
+
+local autoflightmasterFrame = CreateFrame('frame')
+autoflightmasterFrame:RegisterEvent('TAXIMAP_OPENED')
+autoflightmasterFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+autoflightmasterFrame:SetScript('OnEvent', autoDismount)
 
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
@@ -371,59 +448,3 @@ function wcEnd()
 	SetCVar('autoUnshift', 1)
 	UIErrorsFrame:Clear()
 end
-
---检测哪个背包有空格，有则取下身上的装备
---默认取下的装备部位是神像，神像的slotID是18
-local function UnequipSlot(slotId)
-    local slotId = slotId or 18
-    local emptybag, bag = nil
-    for bag = 4, 0, -1 do
-        for slot = 1, GetContainerNumSlots(bag) do
-            local link = GetContainerItemLink(bag, slot)
-            if link == nil then
-                emptybag = bag
-            end
-        end
-    end
-    if emptybag ~= 0 then
-        PickupInventoryItem(slotId)
-        local bagID = emptybag + 19
-        PutItemInBag(bagID)
-    elseif emptybag == 0 then
-        PickupInventoryItem(slotId)
-        PutItemInBackpack()
-    end
-end
-
---检测蓝龙光环和法链CD
---法链的itemID是28370
-local function isBlueDragon()
-    if GetInventoryItemID('player', 13) ~= 28370 and GetInventoryItemID('player', 14) ~= 28370 then
-        return
-    end
-
-    local i = 1
-    while i <= 32 do
-        if GetItemCooldown(28370) == 0 and UnitBuff("player",i) == "蓝龙光环" then
-            return true
-        end
-        i = i + 1
-    end
-end
-
---触发蓝龙且法链不在CD则卸下神像
---神像的slotID是18
-local function UnequipIdolforBlueDragon()
-    if not IsInInstance() then return end --不在副本中则不卸下神像
-    if not InCombatLockdown() then return end --不在战斗中则不卸下神像
-    if isBlueDragon() then
-        UnequipSlot(18)
-    end
-end
-
-local bluedragonFrame = CreateFrame('frame')
-bluedragonFrame:RegisterEvent('UNIT_AURA')
-bluedragonFrame:RegisterEvent('PLAYER_STARTED_MOVING')
-bluedragonFrame:RegisterEvent('PLAYER_STOPPED_MOVING')
-bluedragonFrame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED')
-bluedragonFrame:SetScript('OnEvent', UnequipIdolforBlueDragon)
