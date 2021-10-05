@@ -7,7 +7,7 @@ function SlashCmdList.WCALERT(msg, editBox)
 end
 
 local function wcInit()
-	if wcAlert == nil then wcAlert = true end
+	wcAlert = wcAlert or false
 	local title = select(2, GetAddOnInfo('whitepaws'))
 	print('欢迎使用'..title)
 	print('当前被控通告为:'..(wcAlert and '开' or '关'))
@@ -25,9 +25,9 @@ end
 
 local clearcasting = false
 local flying = false
+local nextTick = 2
 
 --PowerSpark
-local nextTick = 2
 local class = select(2, UnitClass('player'))
 local frame = CreateFrame('Frame')
 for _, item in pairs({
@@ -88,7 +88,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			end
 			power:HookScript('OnUpdate', function(self)
 				local now = GetTime()
-				nextTick = 2 - mod(now - self.timer, 2) - getLatency()
+				nextTick = 2 - mod(now - self.timer, 2)
 				if now < self.rate then return end
 				self.rate = now + 0.02 --刷新率
 				if self.hide(self.key) then
@@ -98,7 +98,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (self.wait - now) / 5, 0)
 				elseif self.timer then
 					self.spark:SetAlpha(1)
-					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (mod(now - self.timer + getLatency(), self.interval) / self.interval), 0)
+					self.spark:SetPoint('CENTER', self, 'LEFT', self:GetWidth() * (mod(now - self.timer, self.interval) / self.interval), 0)
 				end
 			end)
 			self[key] = power
@@ -150,6 +150,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 end)
 --End of PowerSpark
 
+--判断控制
 local strongControl, rooted
 
 local function GetControls(self, event, ...)
@@ -199,29 +200,28 @@ controlFrame:SetScript('OnEvent', GetControls)
 --马鞭: 25653 迅捷飞行符咒: 32481
 local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
-	if IsMounted() then
+	if IsMounted() and not UnitOnTaxi("player") then
 		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
         	if GetInventoryItemID('player', 14) ~= 32481 then
-				OriginTrinket = GetInventoryItemID('player', 14)
+				originTrinket = GetInventoryItemID('player', 14)
 			end
 			EquipItemByName(25653, 14)
 		end
 	elseif (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
 		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
         	if GetInventoryItemID('player', 14) ~= 25653 then
-				OriginTrinket = GetInventoryItemID('player', 14)
+				originTrinket = GetInventoryItemID('player', 14)
 			end
 			EquipItemByName(32481, 14)
 		end
 	elseif GetInventoryItemID('player', 14) == 25653 or GetInventoryItemID('player' ,14) == 32481 then
-        if OriginTrinket ~= nil then
-			EquipItemByName(OriginTrinket, 14)
+        if originTrinket ~= nil then
+			EquipItemByName(originTrinket, 14)
 		end
-        OriginTrinket = nil
 	end
 end
 
-local boostFrame = CreateFrame('frame')
+local boostFrame = CreateFrame('Frame')
 boostFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
 boostFrame:RegisterEvent('PLAYER_STARTED_MOVING')
 boostFrame:RegisterEvent('PLAYER_STOPPED_MOVING')
@@ -244,7 +244,7 @@ local function getShiftLeftTime()
 end
 
 local function ableShift()
-	return getShiftLeftTime() <= getLatency()
+	return getShiftLeftTime() <= getLatency() / 2
 end
 
 local function getMana()
@@ -259,10 +259,7 @@ local function getEnergy()
 	if GetShapeshiftForm() ~= 3 then
 		return 0
 	end
-	local trueEnergy = UnitPower('player', 3)
-	if nextTick <= 0 then trueEnergy = trueEnergy + 20 end
-	if trueEnergy > 100 then trueEnergy = 100 end
-	return trueEnergy
+	return UnitPower('player', 3)
 end
 
 local function getBuff(name)
@@ -294,8 +291,10 @@ local function enoughEnergywithNextTick(cost)
 	if clearcasting then
 		return true
 	end
-	if getEnergy() >= cost then return true end
-	if getEnergy() + 20 >= cost and nextTick <= 1.5 then return true end
+	local e = getEnergy()
+	if nextTick + getLatency() / 2 >= 2 or nextTick - getLatency() / 2 <= 0 then e = e + 20 end
+	if e >= cost then return true end
+	if e + 20 >= cost and nextTick - getLatency() / 2 <= 1.5 then return true end
 	return false
 end
 
@@ -310,7 +309,7 @@ end
 
 --输出，考虑延迟
 function dps(cost)
-	if not strongControl and enoughMana() and (rooted or ableShift() and not enoughEnergywithNextTick(cost)) then
+	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -319,7 +318,7 @@ end
 
 --老款输出，不考虑延迟
 function dpsx(cost)
-	if not strongControl and enoughMana() and (rooted or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
+	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -329,20 +328,18 @@ end
 
 --变身
 function shift(r, e, m)
-	if r == nil then r = 200 end
-	if e == nil then e = 200 end
-	if getShiftGCD() or not enoughMana(m) or getRage() >= r or getEnergy() >= e then
-		SetCVar('autoUnshift', 0)
-	else
+	r = r or 200
+	e = e or 200
+	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or not enoughRage(r) and not enoughEnergy(e)) then
 		SetCVar('autoUnshift', 1)
+	else
+		SetCVar('autoUnshift', 0)
 	end
 end
 
 --吃蓝，考虑延迟
 function manapot(cost, name)
-	local itemId = GetItemInfoInstant(name)
-	local level=UnitLevel('target')
-	if level ~= -1 or not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(itemId) > 0 then
+	if UnitLevel('target') ~= -1 or not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 then
 		SetCVar('autoUnshift', 0)
 	else
 		SetCVar('autoUnshift', 1)
@@ -351,9 +348,7 @@ end
 
 --老款吃蓝，不考虑延迟
 function manapotx(cost, name)
-	local itemId = GetItemInfoInstant(name)
-	local level=UnitLevel('target')
-	if level ~= -1 or getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(itemId) > 0 then
+	if UnitLevel('target') ~= -1 or getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 then
 		SetCVar('autoUnshift', 0)
 	else
 		SetCVar('autoUnshift', 1)
@@ -361,8 +356,9 @@ function manapotx(cost, name)
 end
 
 --吃红
+--9634巨熊形态
 function hppot()
-	local u,n = IsUsableSpell('巨熊形态')
+	local u,n = IsUsableSpell(9634)
 	if getShiftGCD() or strongControl or not u
 		then SetCVar('autoUnshift', 0)
 	else
