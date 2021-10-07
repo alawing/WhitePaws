@@ -1,3 +1,29 @@
+SLASH_WCALERT1 = '/wcalert'
+
+function SlashCmdList.WCALERT(msg, editBox)
+	wcAlert = not wcAlert
+	print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
+	print('|cffffff00输入/wcalert来进行开关|r')
+	print('|cffffff00输入/wp help查看命令帮助|r')
+end
+
+local function wcInit()
+	wcAlert = wcAlert or false
+	wpIsInInstance = wpIsInInstance or false
+	wpFlightMaster = wpFlightMaster or true
+	wpSpeed = wpSpeed or true
+	local title = select(2, GetAddOnInfo('whitepaws'))
+	print('|cffffff00欢迎使用|r'..title)
+	print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
+	print('|cffffff00输入/wcalert来进行开关|r')
+	print('|cffffff00输入/wp help查看命令帮助|r')
+end
+
+local initFrame = CreateFrame('Frame')
+
+initFrame:RegisterEvent('PLAYER_LOGIN')
+initFrame:SetScript('OnEvent', wcInit)
+
 local function WhitePaws_Command(arg1)
 	arg1 = strlower(arg1)
 	if arg1 == "alert" then
@@ -12,30 +38,38 @@ local function WhitePaws_Command(arg1)
 		print('|cffffff00输入/wp help查看命令帮助|r')
 	elseif arg1 == "fly" then
 		wpFlightMaster = not wpFlightMaster
-        	print('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(dsfFlightMaster and '开' or '关'))
+        	print('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(wpFlightMaster and '开' or '关'))
 	elseif arg1 == "speed" then
 		if speedFrame:IsShown() then
             		speedFrame:Hide()
+			wpSpeed = false
+            		print('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'))
         	else
             		speedFrame:Show()
+			wpSpeed = true
+            		print('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'))
         	end
 	elseif arg1 == "show" then
 		print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
 		print('|cffffff00当前副本/战场内自动换马鞭功能为:|r'..(wpIsInInstance and '开' or '关'))
+		print('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(wpFlightMaster and '开' or '关'))
+		print('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'))
 		print('|cffffff00输入/wp help查看命令帮助|r')
 	elseif arg1 == "help" then
 		print('|cffffff00/wcalert    开关被控通告功能|r')
 		print('|cffffff00/wp alert   开关被控通告功能|r')
 		print('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r')
 		print('|cffffff00/wp speed   开关小地图右下方移动速度显示框体|r')
-		print('|cffffff00/wp show    显示当前被控通告和自动马鞭功能的开关状态|r')
+		print('|cffffff00/dsf fly    点击飞行点地图自动取消变形功能|r')
+		print('|cffffff00/wp show    显示各项功能的开关状态|r')
 		print('|cffffff00/wp help    查看命令帮助|r')
 	else
 		print('|cffffff00/wcalert    开关被控通告功能|r')
 		print('|cffffff00/wp alert   开关被控通告功能|r')
 		print('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r')
 		print('|cffffff00/wp speed   开关小地图右下方移动速度显示框体|r')
-		print('|cffffff00/wp show    显示当前被控通告和自动马鞭功能的开关状态|r')
+		print('|cffffff00/dsf fly    点击飞行点地图自动取消变形功能|r')
+		print('|cffffff00/wp show    显示各项功能的开关状态|r')
 		print('|cffffff00/wp help    查看命令帮助|r')
 	end
 end
@@ -43,31 +77,6 @@ end
 SlashCmdList["WHITEPAWS"] = WhitePaws_Command
 SLASH_WHITEPAWS1 = '/whitepaws'
 SLASH_WHITEPAWS2 = '/wp'
-
-SLASH_WCALERT1 = '/wcalert'
-
-function SlashCmdList.WCALERT(msg, editBox)
-	wcAlert = not wcAlert
-	print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
-	print('|cffffff00输入/wcalert来进行开关|r')
-	print('|cffffff00输入/wp help查看命令帮助|r')
-end
-
-local function wcInit()
-	wcAlert = wcAlert or false
-	wpIsInInstance = wpIsInInstance or false
-	wpFlightMaster = wpFlightMaster or true
-	local title = select(2, GetAddOnInfo('whitepaws'))
-	print('|cffffff00欢迎使用|r'..title)
-	print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
-	print('|cffffff00输入/wcalert来进行开关|r')
-	print('|cffffff00输入/wp help查看命令帮助|r')
-end
-
-local initFrame = CreateFrame('Frame')
-
-initFrame:RegisterEvent('PLAYER_LOGIN')
-initFrame:SetScript('OnEvent', wcInit)
 
 local function getLatency()
 	return select(4, GetNetStats()) / 1000
