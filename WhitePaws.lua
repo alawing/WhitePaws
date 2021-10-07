@@ -28,34 +28,41 @@ local function WhitePaws_Command(arg1)
 	arg1 = strlower(arg1)
 	if arg1 == "alert" then
 		wcAlert = not wcAlert
+		print('---------------------')
 		print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
 		print('|cffffff00输入/wcalert或/wp alert来进行开关|r')
 		print('|cffffff00输入/wp help查看命令帮助|r')
 	elseif arg1 == "bg" then
 		wpIsInInstance = not wpIsInInstance
+		print('---------------------')
 		print('|cffffff00当前副本/战场内自动换马鞭功能为:|r'..(wpIsInInstance and '开' or '关'))
 		print('|cffffff00输入/wp bg来进行开关|r')
 		print('|cffffff00输入/wp help查看命令帮助|r')
 	elseif arg1 == "fly" then
 		wpFlightMaster = not wpFlightMaster
+		print('---------------------')
         	print('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(wpFlightMaster and '开' or '关'))
 	elseif arg1 == "speed" then
 		if speedFrame:IsShown() then
             		speedFrame:Hide()
 			wpSpeed = false
+			print('---------------------')
             		print('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'))
         	else
             		speedFrame:Show()
 			wpSpeed = true
+			print('---------------------')
             		print('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'))
         	end
 	elseif arg1 == "show" then
+		print('---------------------')
 		print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
 		print('|cffffff00当前副本/战场内自动换马鞭功能为:|r'..(wpIsInInstance and '开' or '关'))
 		print('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(wpFlightMaster and '开' or '关'))
 		print('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'))
 		print('|cffffff00输入/wp help查看命令帮助|r')
 	elseif arg1 == "help" then
+		print('---------------------')
 		print('|cffffff00/wcalert    开关被控通告功能|r')
 		print('|cffffff00/wp alert   开关被控通告功能|r')
 		print('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r')
@@ -64,6 +71,7 @@ local function WhitePaws_Command(arg1)
 		print('|cffffff00/wp show    显示各项功能的开关状态|r')
 		print('|cffffff00/wp help    查看命令帮助|r')
 	else
+		print('---------------------')
 		print('|cffffff00/wcalert    开关被控通告功能|r')
 		print('|cffffff00/wp alert   开关被控通告功能|r')
 		print('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r')
