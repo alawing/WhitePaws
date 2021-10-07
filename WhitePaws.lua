@@ -345,7 +345,7 @@ UIErrorsFrame.AddMessage = function(self, msg, ...)
 end
 
 --移动速度小框体
-local speedFrame = CreateFrame("Frame","MiniMapSpeedFrame", nil, "ThinGoldEdgeTemplate")
+speedFrame = CreateFrame("Frame","MiniMapSpeedFrame", nil, "ThinGoldEdgeTemplate")
 speedFrame:SetParent(MiniMap)
 speedFrame:SetPoint("TOPRIGHT", 0, -150)
 speedFrame:SetFrameStrata("HIGH")
