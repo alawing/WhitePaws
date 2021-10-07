@@ -352,13 +352,20 @@ end
 --ERR_TAXISAMENODE = "你已经在那里了！"
 dummy = UIErrorsFrame.AddMessage
 UIErrorsFrame.AddMessage = function(self, msg, ...)
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wpFlightMaster) then
-    elseif (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) and GetShapeshiftFormID() then
-        autoUnshift()
-        msg = msg.."\n点击飞行点地图可以解除变形！"
-        C_Timer.After(0.8, function() autoUnshiftFrame:EnableMouse(false) end)
-    end
-    dummy(UIErrorsFrame, msg, ...)
+	if InCombatLockdown() or NumTaxiNodes() == 0 or (not wpFlightMaster) then
+   	elseif (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) and GetShapeshiftFormID() then
+        	autoUnshift()
+        	C_Timer.After(0.8, function() autoUnshiftFrame:EnableMouse(false) end)
+	elseif (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) and not GetShapeshiftFormID() then
+        	local i = 1
+        	while i <= 32 do
+            		if UnitBuff("player",i) == "诺格弗格药剂" or "熊怪形态" then
+                		CancelUnitBuff("player",i)
+            		end
+            		i = i + 1
+        	end
+    	end
+	dummy(UIErrorsFrame, msg, ...)
 end
 
 --移动速度小框体
@@ -375,8 +382,8 @@ speedFrame:SetWidth(46)
 speedFrame:SetHeight(17)
 speedFrame:Show()
 speedFrame:SetScript("OnUpdate",function()
-    local playerCurrentSpeed = string.format("%d%%", GetUnitSpeed("player") / 7 * 100)
-    speedFrame.fs:SetText(playerCurrentSpeed)
+	    local playerCurrentSpeed = string.format("%d%%", GetUnitSpeed("player") / 7 * 100)
+	    speedFrame.fs:SetText(playerCurrentSpeed)
 end)
 
 local function getShiftGCD()
