@@ -2,9 +2,9 @@ SLASH_WCALERT1 = '/wcalert'
 
 function SlashCmdList.WCALERT(msg, editBox)
 	wcAlert = not wcAlert
-	SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'),255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wcalert来进行开关|r',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wp help查看命令帮助|r',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wcalert来进行开关',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 end
 
 local function wcInit()
@@ -13,10 +13,10 @@ local function wcInit()
 	wpFlightMaster = wpFlightMaster or true
 	wpSpeed = wpSpeed or true
 	local title = select(2, GetAddOnInfo('whitepaws'))
-	SELECTED_CHAT_FRAME:AddMessage('|cffffff00欢迎使用|r'..title,255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'),255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wcalert来进行开关|r',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wp help查看命令帮助|r',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wcalert来进行开关',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 end
 
 local initFrame = CreateFrame('Frame')
@@ -29,56 +29,56 @@ local function WhitePaws_Command(arg1)
 	if arg1 == "alert" then
 		wcAlert = not wcAlert
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wcalert或/wp alert来进行开关|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wp help查看命令帮助|r',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wcalert或/wp alert来进行开关',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 	elseif arg1 == "bg" then
 		wpIsInInstance = not wpIsInInstance
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前副本/战场内自动换马鞭功能为:|r'..(wpIsInInstance and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wp bg来进行开关|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wp help查看命令帮助|r',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp bg来进行开关',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 	elseif arg1 == "fly" then
 		wpFlightMaster = not wpFlightMaster
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-        	SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(wpFlightMaster and '开' or '关'),255,255,0)
+        	SELECTED_CHAT_FRAME:AddMessage('当前点击飞行点地图自动取消变形功能为: '..(wpFlightMaster and '开' or '关'),255,255,0)
 	elseif arg1 == "speed" then
 		if speedFrame:IsShown() then
             		speedFrame:Hide()
 			wpSpeed = false
 			SELECTED_CHAT_FRAME:AddMessage('---------------------')
-            		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'),255,255,0)
+            		SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
         	else
             		speedFrame:Show()
 			wpSpeed = true
 			SELECTED_CHAT_FRAME:AddMessage('---------------------')
-            		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'),255,255,0)
+            		SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
         	end
 	elseif arg1 == "show" then
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前副本/战场内自动换马鞭功能为:|r'..(wpIsInInstance and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(wpFlightMaster and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00当前移动速度小框体为: |r'..(wpSpeed and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00输入/wp help查看命令帮助|r',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前点击飞行点地图自动取消变形功能为: '..(wpFlightMaster and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 	elseif arg1 == "help" then
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wcalert    开关被控通告功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp alert   开关被控通告功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp speed   开关小地图右下方移动速度显示框体|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/dsf fly    点击飞行点地图自动取消变形功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp show    显示各项功能的开关状态|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp help    查看命令帮助|r',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wcalert    开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/dsf fly    点击飞行点地图自动取消变形功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
 	else
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wcalert    开关被控通告功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp alert   开关被控通告功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp speed   开关小地图右下方移动速度显示框体|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/dsf fly    点击飞行点地图自动取消变形功能|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp show    显示各项功能的开关状态|r',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('|cffffff00/wp help    查看命令帮助|r',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wcalert    开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/dsf fly    点击飞行点地图自动取消变形功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
 	end
 end
 
