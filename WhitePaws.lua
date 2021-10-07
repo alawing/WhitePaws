@@ -2,22 +2,82 @@ SLASH_WCALERT1 = '/wcalert'
 
 function SlashCmdList.WCALERT(msg, editBox)
 	wcAlert = not wcAlert
-	print('当前被控通告为:'..(wcAlert and '开' or '关'))
-	print('输入/wcalert来进行开关')
+	SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wcalert来进行开关',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 end
 
 local function wcInit()
 	wcAlert = wcAlert or false
+	wpIsInInstance = wpIsInInstance or false
+	wpFlightMaster = wpFlightMaster or true
+	--wpSpeed = wpSpeed or true
 	local title = select(2, GetAddOnInfo('whitepaws'))
-	print('欢迎使用'..title)
-	print('当前被控通告为:'..(wcAlert and '开' or '关'))
-	print('输入/wcalert来进行开关')
+	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wcalert来进行开关',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 end
 
 local initFrame = CreateFrame('Frame')
 
 initFrame:RegisterEvent('PLAYER_LOGIN')
 initFrame:SetScript('OnEvent', wcInit)
+
+local function WhitePaws_Command(arg1)
+	arg1 = strlower(arg1)
+	if arg1 == "alert" then
+		wcAlert = not wcAlert
+		SELECTED_CHAT_FRAME:AddMessage('---------------------')
+		SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wcalert或/wp alert来进行开关',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
+	elseif arg1 == "bg" then
+		wpIsInInstance = not wpIsInInstance
+		SELECTED_CHAT_FRAME:AddMessage('---------------------')
+		SELECTED_CHAT_FRAME:AddMessage('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp bg来进行开关',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
+	elseif arg1 == "fly" then
+		wpFlightMaster = not wpFlightMaster
+		SELECTED_CHAT_FRAME:AddMessage('---------------------')
+        	SELECTED_CHAT_FRAME:AddMessage('当前点击飞行点地图自动取消变形功能为: '..(wpFlightMaster and '开' or '关'),255,255,0)
+	elseif arg1 == "speed" then
+		wpSpeed = not wpSpeed
+            	showSpeed()
+            	SELECTED_CHAT_FRAME:AddMessage('---------------------')
+            	SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
+	elseif arg1 == "show" then
+		SELECTED_CHAT_FRAME:AddMessage('---------------------')
+		SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前点击飞行点地图自动取消变形功能为: '..(wpFlightMaster and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
+	elseif arg1 == "help" then
+		SELECTED_CHAT_FRAME:AddMessage('---------------------')
+		SELECTED_CHAT_FRAME:AddMessage('/wcalert    开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp fly    点击飞行点地图自动取消变形功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
+	else
+		SELECTED_CHAT_FRAME:AddMessage('---------------------')
+		SELECTED_CHAT_FRAME:AddMessage('/wcalert    开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp fly    点击飞行点地图自动取消变形功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
+	end
+end
+
+SlashCmdList["WHITEPAWS"] = WhitePaws_Command
+SLASH_WHITEPAWS1 = '/whitepaws'
+SLASH_WHITEPAWS2 = '/wp'
 
 local function getLatency()
 	return select(4, GetNetStats()) / 1000
@@ -200,21 +260,30 @@ controlFrame:SetScript('OnEvent', GetControls)
 --马鞭: 25653 迅捷飞行符咒: 32481
 local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
+	if IsInInstance() and not wpIsInInstance then return end
+	local mountedTrinket = nil
+    	if GetItemInfoInstant("碎天者之鞭") == 32863 then
+        	mountedTrinket = 32863
+    	elseif GetItemInfoInstant("马鞭") == 25653 then
+        	mountedTrinket = 25653
+    	elseif GetItemInfoInstant("棍子上的胡萝卜") == 37312 then
+        	mountedTrinket = 37312
+    	end
 	if IsMounted() and not UnitOnTaxi("player") then
-		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
+		if GetInventoryItemID('player', 13) ~= mountedTrinket and GetInventoryItemID('player', 14) ~= mountedTrinket then
         	if GetInventoryItemID('player', 14) ~= 32481 then
 				originTrinket = GetInventoryItemID('player', 14)
 			end
-			EquipItemByName(25653, 14)
+			EquipItemByName(mountedTrinket, 14)
 		end
 	elseif (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
 		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
-        	if GetInventoryItemID('player', 14) ~= 25653 then
+        	if GetInventoryItemID('player', 14) ~= mountedTrinket then
 				originTrinket = GetInventoryItemID('player', 14)
 			end
 			EquipItemByName(32481, 14)
 		end
-	elseif GetInventoryItemID('player', 14) == 25653 or GetInventoryItemID('player' ,14) == 32481 then
+	elseif GetInventoryItemID('player', 14) == mountedTrinket or GetInventoryItemID('player' ,14) == 32481 then
         if originTrinket ~= nil then
 			EquipItemByName(originTrinket, 14)
 		end
@@ -232,6 +301,104 @@ boostFrame:RegisterEvent('PLAYER_REGEN_ENABLED') --比PLAYER_LEAVE_COMBAT更精�
 boostFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 boostFrame:SetScript('OnEvent', changeBoostTrinket)
 
+--点击飞行点地图时自动取消变形
+local function autoUnshift()
+    local texture_str = "Interface\\TARGETINGFRAME\\UI-StatusBar"
+    if InCombatLockdown() then return end
+    if not autoUnshiftFrame then
+        autoUnshiftFrame = CreateFrame("Button", "unshiftMacroButton", UIParent, "SecureActionButtonTemplate")
+        autoUnshiftFrame:SetAttribute("type1", "macro")
+        autoUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoUnshiftFrame:EnableMouse(false)')
+        autoUnshiftFrame.bg = autoUnshiftFrame:CreateTexture(nil,"BACKGROUND", nil, -5)
+        autoUnshiftFrame.bg:SetTexture(texture_str)
+        autoUnshiftFrame.bg:SetVertexColor(0.2,0.1,0,0.0)
+        autoUnshiftFrame.bg:SetAllPoints(autoUnshiftFrame)
+        autoUnshiftFrame:SetParent(TaxiRouteMap)
+        autoUnshiftFrame:SetAllPoints(TaxiRouteMap)
+        autoUnshiftFrame:SetSize(320,350)
+        autoUnshiftFrame:SetPoint("TOPLEFT",0,0)
+        autoUnshiftFrame:EnableMouse(true)
+        autoUnshiftFrame:RegisterForClicks("LeftButtonUp")
+        autoUnshiftFrame:SetFrameLevel(3)
+        autoUnshiftFrame.tip = CreateFrame("GameTooltip","autoUnshiftTooltip",nil,"GameTooltipTemplate")
+        autoUnshiftFrame.tip:SetAllPoints(autoUnshiftFrame)
+        autoUnshiftFrame:Show()
+        autoUnshiftFrame:SetScript("OnEnter",function(self)
+            autoUnshiftFrame.tip:SetOwner(self,"ANCHOR_CURSOR")
+            autoUnshiftFrame.tip:AddLine("点击飞行点地图可以解除变形")
+            --autoUnshiftFrame.tip:Show()
+        end)
+        autoUnshiftFrame:SetScript("OnLeave",function(self)
+            autoUnshiftFrame.tip:Hide()
+        end)
+        return
+    elseif GetShapeshiftFormID() then
+        autoUnshiftFrame:Show()
+        autoUnshiftFrame:EnableMouse(true)
+        return
+    end
+end
+
+--侦测"你不能在变形状态下使用空中运输服务！"红字错误，然后打开自动解除变形
+--ERR_TAXIPLAYERMOVING = "你正在移动。"
+--ERR_TAXIPLAYERSHAPESHIFTED = "你不能在变形状态下使用空中运输服务！"
+--ERR_TAXISAMENODE = "你已经在那里了！"
+--诺格弗格药剂（骷髅）:16591  熊怪形态:6405
+dummy = UIErrorsFrame.AddMessage
+UIErrorsFrame.AddMessage = function(self, msg, ...)
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wpFlightMaster) then
+    elseif (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) and GetShapeshiftFormID() then
+        autoUnshift()
+        C_Timer.After(0.8, function() autoUnshiftFrame:EnableMouse(false) end)
+    end
+    if (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) then
+        local i = 1
+        while i <= 32 do
+            local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
+            if spellId == 16591 or spellId == 6405 then
+                CancelUnitBuff("player", i)
+            elseif spellId == nil then
+                break
+            end
+            i = i + 1
+        end
+    end
+    dummy(UIErrorsFrame, msg, ...)
+end
+
+--移动速度小框体
+function showSpeed()
+    if not speedFrame then
+        speedFrame = CreateFrame("Frame","MiniMapSpeedFrame", nil, "ThinGoldEdgeTemplate")
+        speedFrame:SetParent(MiniMap)
+        speedFrame:SetPoint("TOPRIGHT", 0, -150)
+        speedFrame:SetFrameStrata("HIGH")
+        speedFrame:SetFrameLevel(9)
+        speedFrame:SetMovable(true)
+        speedFrame.fs = speedFrame:CreateFontString("MinimapLayerFrameFS", "ARTWORK")
+        speedFrame.fs:SetPoint("CENTER", 0, 0)
+        speedFrame.fs:SetFont("Fonts\\ARHei.ttf", 10)
+        speedFrame:SetWidth(46)
+        speedFrame:SetHeight(17)
+        speedFrame:SetScript("OnUpdate",function()
+            local playerCurrentSpeed = string.format("%d%%", GetUnitSpeed("player") / 7 * 100)
+            speedFrame.fs:SetText(playerCurrentSpeed)
+        end)
+    end
+    if wpSpeed == true then
+        speedFrame:Show()
+    else
+        speedFrame:Hide()
+    end
+end
+
+local showSpeedFrame = CreateFrame("frame")
+showSpeedFrame:RegisterEvent("PLAYER_LOGIN")
+showSpeedFrame:RegisterEvent("ADDON_LOADED")
+showSpeedFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+showSpeedFrame:SetScript("OnEvent",showSpeed)
+
+--变形条件
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
 end
