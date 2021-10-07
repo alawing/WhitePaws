@@ -347,9 +347,9 @@ local function autoUnshift()
 end
 
 --侦测"你不能在变形状态下使用空中运输服务！"红字错误，然后打开自动取消变形
---local ERR_TAXIPLAYERMOVING = "你正在移动。"
---local ERR_TAXIPLAYERSHAPESHIFTED = "你不能在变形状态下使用空中运输服务！"
---local ERR_TAXISAMENODE = "你已经在那里了！"
+--ERR_TAXIPLAYERMOVING = "你正在移动。"
+--ERR_TAXIPLAYERSHAPESHIFTED = "你不能在变形状态下使用空中运输服务！"
+--ERR_TAXISAMENODE = "你已经在那里了！"
 dummy = UIErrorsFrame.AddMessage
 UIErrorsFrame.AddMessage = function(self, msg, ...)
     if InCombatLockdown() or NumTaxiNodes() == 0 or (not wpFlightMaster) then
