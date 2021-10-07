@@ -8,5 +8,6 @@
 ## SavedVariables: wcAlert
 ## SavedVariables: wpIsInInstance
 ## SavedVariables: wpFlightMaster
+## SavedVariables: wpSpeed
 
 WhitePaws.lua
