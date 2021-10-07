@@ -11,7 +11,7 @@ local function wcInit()
 	wcAlert = wcAlert or false
 	wpIsInInstance = wpIsInInstance or false
 	wpFlightMaster = wpFlightMaster or true
-	wpSpeed = wpSpeed or true
+	--wpSpeed = wpSpeed or true
 	local title = select(2, GetAddOnInfo('whitepaws'))
 	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
 	SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
