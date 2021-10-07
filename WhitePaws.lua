@@ -43,17 +43,10 @@ local function WhitePaws_Command(arg1)
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
         	SELECTED_CHAT_FRAME:AddMessage('当前点击飞行点地图自动取消变形功能为: '..(wpFlightMaster and '开' or '关'),255,255,0)
 	elseif arg1 == "speed" then
-		if speedFrame:IsShown() then
-            		speedFrame:Hide()
-			wpSpeed = false
-			SELECTED_CHAT_FRAME:AddMessage('---------------------')
-            		SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
-        	else
-            		speedFrame:Show()
-			wpSpeed = true
-			SELECTED_CHAT_FRAME:AddMessage('---------------------')
-            		SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
-        	end
+		wpSpeed = not wpSpeed
+            	showSpeed()
+            	SELECTED_CHAT_FRAME:AddMessage('---------------------')
+            	SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
 	elseif arg1 == "show" then
 		SELECTED_CHAT_FRAME:AddMessage('---------------------')
 		SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
@@ -67,7 +60,7 @@ local function WhitePaws_Command(arg1)
 		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/dsf fly    点击飞行点地图自动取消变形功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp fly    点击飞行点地图自动取消变形功能',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
 	else
@@ -76,7 +69,7 @@ local function WhitePaws_Command(arg1)
 		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/dsf fly    点击飞行点地图自动取消变形功能',255,255,0)
+		SELECTED_CHAT_FRAME:AddMessage('/wp fly    点击飞行点地图自动取消变形功能',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
 		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
 	end
@@ -353,7 +346,7 @@ end
 --诺格弗格药剂（骷髅）:16591  熊怪形态:6405
 dummy = UIErrorsFrame.AddMessage
 UIErrorsFrame.AddMessage = function(self, msg, ...)
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not dsfFlightMaster) then
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wpFlightMaster) then
     elseif (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) and GetShapeshiftFormID() then
         autoUnshift()
         C_Timer.After(0.8, function() autoUnshiftFrame:EnableMouse(false) end)
@@ -374,23 +367,38 @@ UIErrorsFrame.AddMessage = function(self, msg, ...)
 end
 
 --移动速度小框体
-speedFrame = CreateFrame("Frame","MiniMapSpeedFrame", nil, "ThinGoldEdgeTemplate")
-speedFrame:SetParent(MiniMap)
-speedFrame:SetPoint("TOPRIGHT", 0, -150)
-speedFrame:SetFrameStrata("HIGH")
-speedFrame:SetFrameLevel(9)
-speedFrame:SetMovable(true)
-speedFrame.fs = speedFrame:CreateFontString("MinimapLayerFrameFS", "ARTWORK")
-speedFrame.fs:SetPoint("CENTER", 0, 0)
-speedFrame.fs:SetFont("Fonts\\ARHei.ttf", 10)
-speedFrame:SetWidth(46)
-speedFrame:SetHeight(17)
-speedFrame:Show()
-speedFrame:SetScript("OnUpdate",function()
-	    local playerCurrentSpeed = string.format("%d%%", GetUnitSpeed("player") / 7 * 100)
-	    speedFrame.fs:SetText(playerCurrentSpeed)
-end)
+function showSpeed()
+    if not speedFrame then
+        speedFrame = CreateFrame("Frame","MiniMapSpeedFrame", nil, "ThinGoldEdgeTemplate")
+        speedFrame:SetParent(MiniMap)
+        speedFrame:SetPoint("TOPRIGHT", 0, -150)
+        speedFrame:SetFrameStrata("HIGH")
+        speedFrame:SetFrameLevel(9)
+        speedFrame:SetMovable(true)
+        speedFrame.fs = speedFrame:CreateFontString("MinimapLayerFrameFS", "ARTWORK")
+        speedFrame.fs:SetPoint("CENTER", 0, 0)
+        speedFrame.fs:SetFont("Fonts\\ARHei.ttf", 10)
+        speedFrame:SetWidth(46)
+        speedFrame:SetHeight(17)
+        speedFrame:SetScript("OnUpdate",function()
+            local playerCurrentSpeed = string.format("%d%%", GetUnitSpeed("player") / 7 * 100)
+            speedFrame.fs:SetText(playerCurrentSpeed)
+        end)
+    end
+    if wpSpeed == true then
+        speedFrame:Show()
+    else
+        speedFrame:Hide()
+    end
+end
 
+local showSpeedFrame = CreateFrame("frame")
+showSpeedFrame:RegisterEvent("PLAYER_LOGIN")
+showSpeedFrame:RegisterEvent("ADDON_LOADED")
+showSpeedFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+showSpeedFrame:SetScript("OnEvent",showSpeed)
+
+--变形条件
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
 end
