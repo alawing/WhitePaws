@@ -2,24 +2,41 @@ local function WhitePaws_Command(arg1)
 	arg1 = strlower(arg1)
 	if arg1 == "alert" then
 		wcAlert = not wcAlert
-		print('当前被控通告为:'..(wcAlert and '开' or '关'))
-		print('输入/wcalert或/wp alert来进行开关')
-		print('输入/wp help查看命令帮助')
+		print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
+		print('|cffffff00输入/wcalert或/wp alert来进行开关|r')
+		print('|cffffff00输入/wp help查看命令帮助|r')
 	elseif arg1 == "bg" then
 		wpIsInInstance = not wpIsInInstance
-		print('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'))
-		print('输入/wp bg来进行开关')
-		print('输入/wp help查看命令帮助')
+		print('|cffffff00当前副本/战场内自动换马鞭功能为:|r'..(wpIsInInstance and '开' or '关'))
+		print('|cffffff00输入/wp bg来进行开关|r')
+		print('|cffffff00输入/wp help查看命令帮助|r')
+	elseif arg1 == "fly" then
+		wpFlightMaster = not wpFlightMaster
+        	print('|cffffff00当前点击飞行点地图自动取消变形功能为: |r'..(dsfFlightMaster and '开' or '关'))
+	elseif arg1 == "speed" then
+		if speedFrame:IsShown() then
+            		speedFrame:Hide()
+        	else
+            		speedFrame:Show()
+        	end
 	elseif arg1 == "show" then
-		print('当前被控通告为:'..(wcAlert and '开' or '关'))
-		print('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'))
-		print('输入/wp help查看命令帮助')
+		print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
+		print('|cffffff00当前副本/战场内自动换马鞭功能为:|r'..(wpIsInInstance and '开' or '关'))
+		print('|cffffff00输入/wp help查看命令帮助|r')
 	elseif arg1 == "help" then
-		print('/wcalert    开关被控通告功能')
-		print('/wp alert   开关被控通告功能')
-		print('/wp bg      开关副本/战场内自动马鞭功能')
-		print('/wp show    显示当前被控通告和自动马鞭功能的开关状态')
-		print('/wp help    查看命令帮助')
+		print('|cffffff00/wcalert    开关被控通告功能|r')
+		print('|cffffff00/wp alert   开关被控通告功能|r')
+		print('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r')
+		print('|cffffff00/wp speed   开关小地图右下方移动速度显示框体|r')
+		print('|cffffff00/wp show    显示当前被控通告和自动马鞭功能的开关状态|r')
+		print('|cffffff00/wp help    查看命令帮助|r')
+	else
+		print('|cffffff00/wcalert    开关被控通告功能|r')
+		print('|cffffff00/wp alert   开关被控通告功能|r')
+		print('|cffffff00/wp bg      开关副本/战场内自动马鞭功能|r')
+		print('|cffffff00/wp speed   开关小地图右下方移动速度显示框体|r')
+		print('|cffffff00/wp show    显示当前被控通告和自动马鞭功能的开关状态|r')
+		print('|cffffff00/wp help    查看命令帮助|r')
 	end
 end
 
@@ -31,19 +48,20 @@ SLASH_WCALERT1 = '/wcalert'
 
 function SlashCmdList.WCALERT(msg, editBox)
 	wcAlert = not wcAlert
-	print('当前被控通告为:'..(wcAlert and '开' or '关'))
-	print('输入/wcalert来进行开关')
-	print('输入/wp help查看命令帮助')
+	print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
+	print('|cffffff00输入/wcalert来进行开关|r')
+	print('|cffffff00输入/wp help查看命令帮助|r')
 end
 
 local function wcInit()
 	wcAlert = wcAlert or false
 	wpIsInInstance = wpIsInInstance or false
+	wpFlightMaster = wpFlightMaster or true
 	local title = select(2, GetAddOnInfo('whitepaws'))
-	print('欢迎使用'..title)
-	print('当前被控通告为:'..(wcAlert and '开' or '关'))
-	print('输入/wcalert来进行开关')
-	print('输入/wp help查看命令帮助')
+	print('|cffffff00欢迎使用|r'..title)
+	print('|cffffff00当前被控通告为:|r'..(wcAlert and '开' or '关'))
+	print('|cffffff00输入/wcalert来进行开关|r')
+	print('|cffffff00输入/wp help查看命令帮助|r')
 end
 
 local initFrame = CreateFrame('Frame')
@@ -233,21 +251,29 @@ controlFrame:SetScript('OnEvent', GetControls)
 local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
 	if IsInInstance() and not wpIsInInstance then return end
+	local mountedTrinket = nil
+    	if GetItemInfoInstant("碎天者之鞭") == 32863 then
+        	mountedTrinket = 32863
+    	elseif GetItemInfoInstant("马鞭") == 25653 then
+        	mountedTrinket = 25653
+    	elseif GetItemInfoInstant("棍子上的胡萝卜") == 37312 then
+        	mountedTrinket = 37312
+    	end
 	if IsMounted() and not UnitOnTaxi("player") then
-		if GetInventoryItemID('player', 13) ~= 25653 and GetInventoryItemID('player', 14) ~= 25653 then
+		if GetInventoryItemID('player', 13) ~= mountedTrinket and GetInventoryItemID('player', 14) ~= mountedTrinket then
         	if GetInventoryItemID('player', 14) ~= 32481 then
 				originTrinket = GetInventoryItemID('player', 14)
 			end
-			EquipItemByName(25653, 14)
+			EquipItemByName(mountedTrinket, 14)
 		end
 	elseif (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
 		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
-        	if GetInventoryItemID('player', 14) ~= 25653 then
+        	if GetInventoryItemID('player', 14) ~= mountedTrinket then
 				originTrinket = GetInventoryItemID('player', 14)
 			end
 			EquipItemByName(32481, 14)
 		end
-	elseif GetInventoryItemID('player', 14) == 25653 or GetInventoryItemID('player' ,14) == 32481 then
+	elseif GetInventoryItemID('player', 14) == mountedTrinket or GetInventoryItemID('player' ,14) == 32481 then
         if originTrinket ~= nil then
 			EquipItemByName(originTrinket, 14)
 		end
@@ -272,7 +298,7 @@ local function autoUnshift()
     if not autoUnshiftFrame then
         autoUnshiftFrame = CreateFrame("Button", "unshiftMacroButton", UIParent, "SecureActionButtonTemplate")
         autoUnshiftFrame:SetAttribute("type1", "macro")
-        autoUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoUnshiftFrame:Hide()')
+        autoUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoUnshiftFrame:EnableMouse(false)')
         autoUnshiftFrame.bg = autoUnshiftFrame:CreateTexture(nil,"BACKGROUND", nil, -5)
         autoUnshiftFrame.bg:SetTexture(texture_str)
         autoUnshiftFrame.bg:SetVertexColor(0.2,0.1,0,0.0)
@@ -282,13 +308,15 @@ local function autoUnshift()
         autoUnshiftFrame:SetSize(320,350)
         autoUnshiftFrame:SetPoint("TOPLEFT",0,0)
         autoUnshiftFrame:EnableMouse(true)
+        autoUnshiftFrame:RegisterForClicks("LeftButtonUp")
         autoUnshiftFrame:SetFrameLevel(3)
         autoUnshiftFrame.tip = CreateFrame("GameTooltip","autoUnshiftTooltip",nil,"GameTooltipTemplate")
         autoUnshiftFrame.tip:SetAllPoints(autoUnshiftFrame)
+        autoUnshiftFrame:Show()
         autoUnshiftFrame:SetScript("OnEnter",function(self)
             autoUnshiftFrame.tip:SetOwner(self,"ANCHOR_CURSOR")
             autoUnshiftFrame.tip:AddLine("点击飞行点地图可以解除变形")
-            autoUnshiftFrame.tip:Show()
+            --autoUnshiftFrame.tip:Show()
         end)
         autoUnshiftFrame:SetScript("OnLeave",function(self)
             autoUnshiftFrame.tip:Hide()
@@ -296,29 +324,43 @@ local function autoUnshift()
         return
     elseif GetShapeshiftFormID() then
         autoUnshiftFrame:Show()
-        autoUnshiftFrame.tip:Show()
+        autoUnshiftFrame:EnableMouse(true)
         return
     end
-    autoUnshiftFrame:Hide()
-    autoUnshiftFrame.tip:Hide()
 end
 
---打开飞行点地图时自动下马
-local function autoDismount()
-    if InCombatLockdown() then return end
-    if NumTaxiNodes() == 0 then return end
-    if GetShapeshiftFormID() then
+--侦测"你不能在变形状态下使用空中运输服务！"红字错误，然后打开自动取消变形
+--local ERR_TAXIPLAYERMOVING = "你正在移动。"
+--local ERR_TAXIPLAYERSHAPESHIFTED = "你不能在变形状态下使用空中运输服务！"
+--local ERR_TAXISAMENODE = "你已经在那里了！"
+dummy = UIErrorsFrame.AddMessage
+UIErrorsFrame.AddMessage = function(self, msg, ...)
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wpFlightMaster) then
+    elseif (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) and GetShapeshiftFormID() then
         autoUnshift()
-    elseif not GetShapeshiftFormID() then
-        autoUnshiftFrame:Hide()
-        autoUnshiftFrame.tip:Hide()
+        msg = msg.."\n点击飞行点地图可以解除变形！"
+        C_Timer.After(0.8, function() autoUnshiftFrame:EnableMouse(false) end)
     end
+    dummy(UIErrorsFrame, msg, ...)
 end
 
-local autoflightmasterFrame = CreateFrame('frame')
-autoflightmasterFrame:RegisterEvent('TAXIMAP_OPENED')
-autoflightmasterFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-autoflightmasterFrame:SetScript('OnEvent', autoDismount)
+--移动速度小框体
+local speedFrame = CreateFrame("Frame","MiniMapSpeedFrame", nil, "ThinGoldEdgeTemplate")
+speedFrame:SetParent(MiniMap)
+speedFrame:SetPoint("TOPRIGHT", 0, -150)
+speedFrame:SetFrameStrata("HIGH")
+speedFrame:SetFrameLevel(9)
+speedFrame:SetMovable(true)
+speedFrame.fs = speedFrame:CreateFontString("MinimapLayerFrameFS", "ARTWORK")
+speedFrame.fs:SetPoint("CENTER", 0, 0)
+speedFrame.fs:SetFont("Fonts\\ARHei.ttf", 10)
+speedFrame:SetWidth(46)
+speedFrame:SetHeight(17)
+speedFrame:Show()
+speedFrame:SetScript("OnUpdate",function()
+    local playerCurrentSpeed = string.format("%d%%", GetUnitSpeed("player") / 7 * 100)
+    speedFrame.fs:SetText(playerCurrentSpeed)
+end)
 
 local function getShiftGCD()
 	return GetSpellCooldown(768) > 0
