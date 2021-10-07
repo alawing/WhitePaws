@@ -7,5 +7,6 @@
 ## SavedVariablesPerCharacter: originTrinket
 ## SavedVariables: wcAlert
 ## SavedVariables: wpIsInInstance
+## SavedVariables: wpFlightMaster
 
 WhitePaws.lua
