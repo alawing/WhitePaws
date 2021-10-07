@@ -307,9 +307,6 @@ end
 local function autoDismount()
     if InCombatLockdown() then return end
     if NumTaxiNodes() == 0 then return end
-    if IsMounted() then
-        Dismount()
-    end
     if GetShapeshiftFormID() then
         autoUnshift()
     elseif not GetShapeshiftFormID() then
