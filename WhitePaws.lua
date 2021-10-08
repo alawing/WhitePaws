@@ -260,7 +260,11 @@ controlFrame:SetScript('OnEvent', GetControls)
 --马鞭: 25653 迅捷飞行符咒: 32481
 local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
-	if IsInInstance() and not wpIsInInstance then return end
+	if IsInInstance() and not wpIsInInstance and originTrinket ~= nil then
+		EquipItemByName(originTrinket, 14)
+	elseif IsInInstance() and not wpIsInInstance then
+		return
+	end
 	local mountedTrinket = nil
     	if GetItemInfoInstant("碎天者之鞭") == 32863 then
         	mountedTrinket = 32863
