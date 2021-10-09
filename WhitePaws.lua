@@ -1,83 +1,42 @@
-SLASH_WCALERT1 = '/wcalert'
-
-function SlashCmdList.WCALERT(msg, editBox)
-	wcAlert = not wcAlert
-	SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('输入/wcalert来进行开关',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
-end
-
-local function wcInit()
-	wcAlert = wcAlert or false
-	wpIsInInstance = wpIsInInstance or false
-	wpFlightMaster = wpFlightMaster or true
-	--wpSpeed = wpSpeed or true
-	local title = select(2, GetAddOnInfo('whitepaws'))
-	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('输入/wcalert来进行开关',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
-end
-
-local initFrame = CreateFrame('Frame')
-
-initFrame:RegisterEvent('PLAYER_LOGIN')
-initFrame:SetScript('OnEvent', wcInit)
-
 local function WhitePaws_Command(arg1)
-	arg1 = strlower(arg1)
+	if arg1 then arg1 = strlower(arg1) end
 	if arg1 == "alert" then
 		wcAlert = not wcAlert
-		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('输入/wcalert或/wp alert来进行开关',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
 	elseif arg1 == "bg" then
-		wpIsInInstance = not wpIsInInstance
-		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('输入/wp bg来进行开关',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
+		wcIsInInstance = not wcIsInInstance
 	elseif arg1 == "fly" then
-		wpFlightMaster = not wpFlightMaster
-		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-        	SELECTED_CHAT_FRAME:AddMessage('当前点击飞行点地图自动取消变形功能为: '..(wpFlightMaster and '开' or '关'),255,255,0)
+		wcFlightMaster = not wcFlightMaster
 	elseif arg1 == "speed" then
-		wpSpeed = not wpSpeed
-            	showSpeed()
-            	SELECTED_CHAT_FRAME:AddMessage('---------------------')
-            	SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
-	elseif arg1 == "show" then
-		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('当前被控通告为:'..(wcAlert and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('当前副本/战场内自动换马鞭功能为:'..(wpIsInInstance and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('当前点击飞行点地图自动取消变形功能为: '..(wpFlightMaster and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('当前移动速度小框体为: '..(wpSpeed and '开' or '关'),255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('输入/wp help查看命令帮助',255,255,0)
-	elseif arg1 == "help" then
-		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('/wcalert    开关被控通告功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp fly    点击飞行点地图自动取消变形功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
-	else
-		SELECTED_CHAT_FRAME:AddMessage('---------------------')
-		SELECTED_CHAT_FRAME:AddMessage('/wcalert    开关被控通告功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp alert   开关被控通告功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp bg      开关副本/战场内自动马鞭功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp speed   开关小地图右下方移动速度显示框体',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp fly    点击飞行点地图自动取消变形功能',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp show    显示各项功能的开关状态',255,255,0)
-		SELECTED_CHAT_FRAME:AddMessage('/wp help    查看命令帮助',255,255,0)
+		wcSpeed = not wcSpeed
+		showSpeed()
 	end
+	SELECTED_CHAT_FRAME:AddMessage((wcAlert and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc alert 开关被控通告功能',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage((wcIsInInstance and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc bg 开关副本/战场内自动马鞭功能',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage((wcSpeed and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc speed 开关小地图右下方移动速度显示框体',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage((wcFlightMaster and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc fly 开关点击飞行点地图自动取消变形功能',255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('/wc 查看命令帮助',255,255,0)
 end
 
 SlashCmdList["WHITEPAWS"] = WhitePaws_Command
 SLASH_WHITEPAWS1 = '/whitepaws'
-SLASH_WHITEPAWS2 = '/wp'
+SLASH_WHITEPAWS2 = '/wc'
+
+local function wcInit()
+	wcAlert = wcAlert or false
+	wcIsInInstance = wcIsInInstance or false
+	wcFlightMaster = wcFlightMaster or true
+	wcSpeed = wcSpeed or false
+	local title = select(2, GetAddOnInfo('whitepaws'))
+	SELECTED_CHAT_FRAME:AddMessage('---------------------')
+	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('---------------------')
+	WhitePaws_Command()
+end
+
+local initFrame = CreateFrame('Frame')
+
+initFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+initFrame:SetScript('OnEvent', wcInit)
 
 local function getLatency()
 	return select(4, GetNetStats()) / 1000
@@ -257,26 +216,25 @@ controlFrame:SetScript('OnEvent', GetControls)
 
 --触发：变形,移动,BUFF,换过装备,变形,脱战
 --上坐骑或飞行自动换饰品
---马鞭: 25653 迅捷飞行符咒: 32481
+--马鞭: 25653 迅捷飞行符咒: 32481 碎天者之鞭: 32863 棍子上的胡萝卜: 37312
 local function changeBoostTrinket(self, event, ...)
 	if InCombatLockdown() then return end
-	if IsInInstance() and not wpIsInInstance then return end
 	local mountedTrinket = nil
-    	if GetItemInfoInstant("碎天者之鞭") == 32863 then
+    	if GetItemCount(32863) > 0 then
         	mountedTrinket = 32863
-    	elseif GetItemInfoInstant("马鞭") == 25653 then
+    	elseif GetItemCount(25653) > 0 then
         	mountedTrinket = 25653
-    	elseif GetItemInfoInstant("棍子上的胡萝卜") == 37312 then
+    	elseif GetItemCount(37312) > 0 then
         	mountedTrinket = 37312
     	end
-	if IsMounted() and not UnitOnTaxi("player") then
+	if (not IsInInstance() or wcIsInInstance) and IsMounted() and not UnitOnTaxi("player") then
 		if GetInventoryItemID('player', 13) ~= mountedTrinket and GetInventoryItemID('player', 14) ~= mountedTrinket then
         	if GetInventoryItemID('player', 14) ~= 32481 then
 				originTrinket = GetInventoryItemID('player', 14)
 			end
 			EquipItemByName(mountedTrinket, 14)
 		end
-	elseif (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
+	elseif (not IsInInstance() or wcIsInInstance) and (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
 		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
         	if GetInventoryItemID('player', 14) ~= mountedTrinket then
 				originTrinket = GetInventoryItemID('player', 14)
@@ -346,12 +304,12 @@ end
 --诺格弗格药剂（骷髅）:16591  熊怪形态:6405
 dummy = UIErrorsFrame.AddMessage
 UIErrorsFrame.AddMessage = function(self, msg, ...)
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wpFlightMaster) then
-    elseif (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) and GetShapeshiftFormID() then
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then
+    elseif (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) and GetShapeshiftFormID() then
         autoUnshift()
         C_Timer.After(0.8, function() autoUnshiftFrame:EnableMouse(false) end)
     end
-    if (msg == ERR_TAXIPLAYERMOVING or ERR_TAXIPLAYERSHAPESHIFTED or ERR_TAXISAMENODE) then
+    if (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) then
         local i = 1
         while i <= 32 do
             local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
@@ -385,7 +343,7 @@ function showSpeed()
             speedFrame.fs:SetText(playerCurrentSpeed)
         end)
     end
-    if wpSpeed == true then
+    if wcSpeed == true then
         speedFrame:Show()
     else
         speedFrame:Hide()

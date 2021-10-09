@@ -13,9 +13,11 @@ Can make macro let bear auto choose skill or shift if not enough rage.
 
 3. Auto equip speed up trinket when flying/mounting, equip back when not flying/mounting
 
-4. Tells if been control, input /wcalert to switch on/off this notice
+4. Tells if been control
 
 5. Light bar to show next energy and mana tick
+
+input /wc for help and settings
 
 只能用于中文燃烧的远征怀旧客户端
 1. 猫输出宏
@@ -29,10 +31,12 @@ Can make macro let bear auto choose skill or shift if not enough rage.
 
 3. 飞行/坐骑时自动装加速饰品,不飞时装回
 
-4. 被控时会提示 输入/wcalert来进行开关
+4. 被控时会提示
 
 5. 法力条和能量条提示下一跳时间
 
-先把目录文件放到Interface/Add Ons/WhitePaws里，插件选择上WhitePaws,就可以用说明.txt里面的宏了
+输入 /wc 获得帮助和进行设置
+
+先把目录文件放到Interface/Add Ons/WhitePaws里，插件选择上白爪cksky助手,就可以用说明.txt里面的宏了
 
 猫输出宏需要提前准备好一个 能量转化器，黑色骨灰或者小宠物，把/施放 能量转化器 换成自己的道具

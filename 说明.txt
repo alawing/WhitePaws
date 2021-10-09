@@ -1,4 +1,4 @@
-先把目录文件放到Interface/Add Ons/WhitePaws里，插件选择上WhitePaws,就可以用下面的宏了
+先把目录文件放到Interface/Add Ons/WhitePaws里，插件选择上白爪cksky助手,就可以用下面的宏了
 
 以下是自己用的宏，可以抄过来直接用
 

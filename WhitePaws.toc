@@ -1,13 +1,13 @@
 ## Interface: 20502
-## Title: 白爪助手@project-version@
+## Title: 白爪cksky助手@project-version@
 ## Version: @project-version@
-## Author: NGA:alawing (失眠者白爪-辛迪加)
-## Notes: 失眠者白爪辅助宏
+## Author: NGA:alawing (失眠者白爪-辛迪加) NGA:cksky
+## Notes: 白爪cksky辅助插件
 ## SavedVariablesPerCharacter: PowerSparkDB
 ## SavedVariablesPerCharacter: originTrinket
 ## SavedVariables: wcAlert
-## SavedVariables: wpIsInInstance
-## SavedVariables: wpFlightMaster
-## SavedVariables: wpSpeed
+## SavedVariables: wcIsInInstance
+## SavedVariables: wcFlightMaster
+## SavedVariables: wcSpeed
 
 WhitePaws.lua
