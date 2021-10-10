@@ -37,3 +37,5 @@ C_LossOfControl.GetActiveLossOfControlDataByUnit
 					ChatFrame3:AddMessage(nextTick)
 					ChatFrame3:AddMessage(2 - mod(GetTime() - self[key].timer, 2))
 					ChatFrame3:AddMessage('----------------------')
+
+/dump GetItemStats('达图尔的变形魔棒')
