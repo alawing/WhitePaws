@@ -1,12 +1,12 @@
 local function WhitePaws_Command(arg1)
 	if arg1 then arg1 = strlower(arg1) end
-	if arg1 == "alert" then
+	if arg1 == 'alert' then
 		wcAlert = not wcAlert
-	elseif arg1 == "bg" then
+	elseif arg1 == 'bg' then
 		wcIsInInstance = not wcIsInInstance
-	elseif arg1 == "fly" then
+	elseif arg1 == 'fly' then
 		wcFlightMaster = not wcFlightMaster
-	elseif arg1 == "speed" then
+	elseif arg1 == 'speed' then
 		wcSpeed = not wcSpeed
 		showSpeed()
 	end
@@ -17,7 +17,7 @@ local function WhitePaws_Command(arg1)
 	SELECTED_CHAT_FRAME:AddMessage('/wc 查看命令帮助',255,255,0)
 end
 
-SlashCmdList["WHITEPAWS"] = WhitePaws_Command
+SlashCmdList['WHITEPAWS'] = WhitePaws_Command
 SLASH_WHITEPAWS1 = '/whitepaws'
 SLASH_WHITEPAWS2 = '/wc'
 
@@ -227,7 +227,7 @@ local function changeBoostTrinket(self, event, ...)
     	elseif GetItemCount(37312) > 0 then
         	mountedTrinket = 37312
     	end
-	if (not IsInInstance() or wcIsInInstance) and IsMounted() and not UnitOnTaxi("player") then
+	if (not IsInInstance() or wcIsInInstance) and IsMounted() and not UnitOnTaxi('player') then
 		if GetInventoryItemID('player', 13) ~= mountedTrinket and GetInventoryItemID('player', 14) ~= mountedTrinket then
         	if GetInventoryItemID('player', 14) ~= 32481 then
 				originTrinket = GetInventoryItemID('player', 14)
@@ -261,32 +261,32 @@ boostFrame:SetScript('OnEvent', changeBoostTrinket)
 
 --点击飞行点地图时自动取消变形
 local function autoUnshift()
-    local texture_str = "Interface\\TARGETINGFRAME\\UI-StatusBar"
+    local texture_str = 'Interface\\TARGETINGFRAME\\UI-StatusBar'
     if InCombatLockdown() then return end
     if not autoUnshiftFrame then
-        autoUnshiftFrame = CreateFrame("Button", "unshiftMacroButton", UIParent, "SecureActionButtonTemplate")
-        autoUnshiftFrame:SetAttribute("type1", "macro")
-        autoUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoUnshiftFrame:EnableMouse(false)')
-        autoUnshiftFrame.bg = autoUnshiftFrame:CreateTexture(nil,"BACKGROUND", nil, -5)
+        autoUnshiftFrame = CreateFrame('Button', 'unshiftMacroButton', UIParent, 'SecureActionButtonTemplate')
+        autoUnshiftFrame:SetAttribute('type1', 'macro')
+        autoUnshiftFrame:SetAttribute('macrotext1','/cancelform\n/script autoUnshiftFrame:EnableMouse(false)')
+        autoUnshiftFrame.bg = autoUnshiftFrame:CreateTexture(nil,'BACKGROUND', nil, -5)
         autoUnshiftFrame.bg:SetTexture(texture_str)
         autoUnshiftFrame.bg:SetVertexColor(0.2,0.1,0,0.0)
         autoUnshiftFrame.bg:SetAllPoints(autoUnshiftFrame)
         autoUnshiftFrame:SetParent(TaxiRouteMap)
         autoUnshiftFrame:SetAllPoints(TaxiRouteMap)
         autoUnshiftFrame:SetSize(320,350)
-        autoUnshiftFrame:SetPoint("TOPLEFT",0,0)
+        autoUnshiftFrame:SetPoint('TOPLEFT',0,0)
         autoUnshiftFrame:EnableMouse(true)
-        autoUnshiftFrame:RegisterForClicks("LeftButtonUp")
+        autoUnshiftFrame:RegisterForClicks('LeftButtonUp')
         autoUnshiftFrame:SetFrameLevel(3)
-        autoUnshiftFrame.tip = CreateFrame("GameTooltip","autoUnshiftTooltip",nil,"GameTooltipTemplate")
+        autoUnshiftFrame.tip = CreateFrame('GameTooltip','autoUnshiftTooltip',nil,'GameTooltipTemplate')
         autoUnshiftFrame.tip:SetAllPoints(autoUnshiftFrame)
         autoUnshiftFrame:Show()
-        autoUnshiftFrame:SetScript("OnEnter",function(self)
-            autoUnshiftFrame.tip:SetOwner(self,"ANCHOR_CURSOR")
-            autoUnshiftFrame.tip:AddLine("点击飞行点地图可以解除变形")
+        autoUnshiftFrame:SetScript('OnEnter',function(self)
+            autoUnshiftFrame.tip:SetOwner(self,'ANCHOR_CURSOR')
+            autoUnshiftFrame.tip:AddLine('点击飞行点地图可以解除变形')
             --autoUnshiftFrame.tip:Show()
         end)
-        autoUnshiftFrame:SetScript("OnLeave",function(self)
+        autoUnshiftFrame:SetScript('OnLeave',function(self)
             autoUnshiftFrame.tip:Hide()
         end)
         return
@@ -297,10 +297,10 @@ local function autoUnshift()
     end
 end
 
---侦测"你不能在变形状态下使用空中运输服务！"红字错误，然后打开自动解除变形
---ERR_TAXIPLAYERMOVING = "你正在移动。"
---ERR_TAXIPLAYERSHAPESHIFTED = "你不能在变形状态下使用空中运输服务！"
---ERR_TAXISAMENODE = "你已经在那里了！"
+--侦测'你不能在变形状态下使用空中运输服务！'红字错误，然后打开自动解除变形
+--ERR_TAXIPLAYERMOVING = '你正在移动。'
+--ERR_TAXIPLAYERSHAPESHIFTED = '你不能在变形状态下使用空中运输服务！'
+--ERR_TAXISAMENODE = '你已经在那里了！'
 --诺格弗格药剂（骷髅）:16591  熊怪形态:6405
 dummy = UIErrorsFrame.AddMessage
 UIErrorsFrame.AddMessage = function(self, msg, ...)
@@ -312,9 +312,9 @@ UIErrorsFrame.AddMessage = function(self, msg, ...)
     if (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) then
         local i = 1
         while i <= 32 do
-            local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
+            local name, _, _, _, _, _, _, _, _, spellId = UnitBuff('player', i)
             if spellId == 16591 or spellId == 6405 then
-                CancelUnitBuff("player", i)
+                CancelUnitBuff('player', i)
             elseif spellId == nil then
                 break
             end
@@ -327,19 +327,19 @@ end
 --移动速度小框体
 function showSpeed()
     if not speedFrame then
-        speedFrame = CreateFrame("Frame","MiniMapSpeedFrame", nil, "ThinGoldEdgeTemplate")
+        speedFrame = CreateFrame('Frame','MiniMapSpeedFrame', nil, 'ThinGoldEdgeTemplate')
         speedFrame:SetParent(MiniMap)
-        speedFrame:SetPoint("TOPRIGHT", 0, -150)
-        speedFrame:SetFrameStrata("HIGH")
+        speedFrame:SetPoint('TOPRIGHT', 0, -150)
+        speedFrame:SetFrameStrata('HIGH')
         speedFrame:SetFrameLevel(9)
         speedFrame:SetMovable(true)
-        speedFrame.fs = speedFrame:CreateFontString("MinimapLayerFrameFS", "ARTWORK")
-        speedFrame.fs:SetPoint("CENTER", 0, 0)
-        speedFrame.fs:SetFont("Fonts\\ARHei.ttf", 10)
+        speedFrame.fs = speedFrame:CreateFontString('MinimapLayerFrameFS', 'ARTWORK')
+        speedFrame.fs:SetPoint('CENTER', 0, 0)
+        speedFrame.fs:SetFont('Fonts\\ARHei.ttf', 10)
         speedFrame:SetWidth(46)
         speedFrame:SetHeight(17)
-        speedFrame:SetScript("OnUpdate",function()
-            local playerCurrentSpeed = string.format("%d%%", GetUnitSpeed("player") / 7 * 100)
+        speedFrame:SetScript('OnUpdate',function()
+            local playerCurrentSpeed = string.format('%d%%', GetUnitSpeed('player') / 7 * 100)
             speedFrame.fs:SetText(playerCurrentSpeed)
         end)
     end
@@ -350,11 +350,11 @@ function showSpeed()
     end
 end
 
-local showSpeedFrame = CreateFrame("frame")
-showSpeedFrame:RegisterEvent("PLAYER_LOGIN")
-showSpeedFrame:RegisterEvent("ADDON_LOADED")
-showSpeedFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-showSpeedFrame:SetScript("OnEvent",showSpeed)
+local showSpeedFrame = CreateFrame('frame')
+showSpeedFrame:RegisterEvent('PLAYER_LOGIN')
+showSpeedFrame:RegisterEvent('ADDON_LOADED')
+showSpeedFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+showSpeedFrame:SetScript('OnEvent',showSpeed)
 
 --变形条件
 local function getShiftGCD()
@@ -456,7 +456,7 @@ end
 function shift(r, e, m)
 	r = r or 200
 	e = e or 200
-	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or not enoughRage(r) and not enoughEnergy(e)) then
+	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or getRage() < r or getEnergy() < e) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -465,16 +465,17 @@ end
 
 --吃蓝，考虑延迟
 function manapot(cost, name)
-	if UnitLevel('target') ~= -1 or not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 then
+	if UnitLevel('target') ~= -1 or not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
 		SetCVar('autoUnshift', 0)
 	else
+		SELECTED_CHAT_FRAME:AddMessage('吃药啦！')
 		SetCVar('autoUnshift', 1)
 	end
 end
 
 --老款吃蓝，不考虑延迟
 function manapotx(cost, name)
-	if UnitLevel('target') ~= -1 or getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 then
+	if UnitLevel('target') ~= -1 or getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
 		SetCVar('autoUnshift', 0)
 	else
 		SetCVar('autoUnshift', 1)
