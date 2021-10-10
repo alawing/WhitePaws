@@ -292,6 +292,7 @@ function autoUnshift()
         	autoUnshiftFrame:EnableMouse(false)
         	TaxiNodeOnButtonLeave(FlightPointButton)
     	end)
+	end
 end
 
 --侦测'你不能在变形状态下使用空中运输服务！'红字错误，然后打开自动解除变形
@@ -354,6 +355,15 @@ function autoCancelShapeshift()
         end
     end
 end
+
+local function unShiftBeforeTaxi()
+	SELECTED_CHAT_FRAME:AddMessage('准备上飞机')
+end
+
+local taxiFrame = CreateFrame('Frame')
+
+taxiFrame:RegisterEvent('TAXIMAP_OPENED')
+taxiFrame:SetScript('OnEvent', unShiftBeforeTaxi)
 
 --移动速度小框体
 function showSpeed()
