@@ -1,4 +1,4 @@
-先把目录文件放到Interface/Add Ons/WhitePaws里，插件选择上WhitePaws,就可以用下面的宏了
+先把目录文件放到Interface/Add Ons/WhitePaws里，插件选择上白爪cksky助手,就可以用下面的宏了
 
 以下是自己用的宏，可以抄过来直接用
 
@@ -7,12 +7,12 @@
 输出系列:
 
 想自动吃药就加这几行
-/脚本 manapot({技能耗能量},'你有的药水名字')
-/施放 [form:3]奥金尼法力药水
-/施放 [form:3]超级法力药水
-/施放 [form:3]法力药水注射器
+/脚本 manapot(技能耗能量,'你有的药水名字')
+/施放 [form:3]你有的药水名字
+/施放 [form:3]你有的备用药水名字
+/施放 [form:3]你有的备用药水名字
 放在第一行和下面这行中间
-/脚本 dps({技能耗能量})
+/脚本 dps(技能耗能量)
 
 #showtooltip [stealth]突袭;裂伤（豹）
 /脚本 dps(40)
@@ -73,13 +73,7 @@
 /脚本 wcEnd()
 
 【熊】：
-能量够冲锋不够变身再冲锋
-#showtooltip 野性冲锋
-/脚本 shift(5)
-/施放 !巨熊形态
-/施放 野性冲锋
-/脚本 wcEnd()
-
+吃药
 #showtooltip
 /脚本 hppot()
 /use 超级治疗药水
@@ -87,10 +81,39 @@
 /施放 !巨熊形态
 /脚本 wcEnd()
 
-单纯重新变身
-#showtooltip
-/脚本 shift()
+熊输出宏，自动解定身,其他技能可以把技能名字改 割伤 横扫 精灵之火（野性） 挫志咆哮
+#showtooltip 裂伤（熊）
+/脚本 shift(0)
+/施放 能量转化器
+/施放 [form:1]裂伤（熊）;!巨熊形态
+/脚本 wcEnd()
+/startattack
+
+重殴因为没gcd是这样
+#showtooltip 重殴
+/脚本 shift(0)
 /施放 !巨熊形态
+/施放 [form:1]重殴
+/脚本 wcEnd()
+/startattack
+
+如果输出宏想没怒气时骗怒气,第二行改为，意思是怒气不够10就变
+/脚本 shift(10)
+如果想设置最低蓝比如，1500蓝一下就不骗怒气了就是
+/脚本 shift(10,nil,1500)
+例如，下面脚本（加过变形天赋后，留1个变身加一个战复的蓝）
+#showtooltip 裂伤（熊）
+/脚本 shift(10,nil,2200)
+/施放 能量转化器
+/施放 [form:1]裂伤（熊）;!巨熊形态
+/脚本 wcEnd()
+/startattack
+
+能量够冲锋不够变身再冲锋
+#showtooltip 野性冲锋
+/脚本 shift(5)
+/施放 !巨熊形态
+/施放 野性冲锋
 /脚本 wcEnd()
 
 点一下激怒，再点一下取消，怒气大于10直接激怒，小于10变身再激怒
@@ -101,8 +124,14 @@
 /施放 激怒
 /脚本 wcEnd()
 
+单纯重新变身
+#showtooltip
+/脚本 shift()
+/施放 !巨熊形态
+/脚本 wcEnd()
+
 旅行：
 #showtooltip
-/脚本 if GetSpellCooldown(783)>0 then SetCVar("autoUnshift",0) end
+/脚本 if GetSpellCooldown(783)>0 then SetCVar('autoUnshift',0) end
 /施放 [swimming,combat]!水栖形态;[swimming]水栖形态;[flyable,nocombat]飞行形态;[combat]!旅行形态;旅行形态
 /脚本 wcEnd()

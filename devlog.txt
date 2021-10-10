@@ -30,3 +30,12 @@ C_LossOfControl.GetActiveLossOfControlDataByUnit
 /run print(UnitDebuff("target", 1))
 
 /framestack
+
+/脚本 CreateFrame("Frame","F")F:RegisterEvent("UNIT_POWER_FREQUENT")F:Y:SetScript("OnEvent",function(_,_,t)if t=='ENERGY' and l then print(GetTime)
+
+					ChatFrame3:AddMessage(powerType)
+					ChatFrame3:AddMessage(nextTick)
+					ChatFrame3:AddMessage(2 - mod(GetTime() - self[key].timer, 2))
+					ChatFrame3:AddMessage('----------------------')
+
+/dump GetItemStats('达图尔的变形魔棒')
