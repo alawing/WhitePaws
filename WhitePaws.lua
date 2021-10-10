@@ -189,7 +189,8 @@ local function GetControls(self, event, ...)
 			locType == 'POSSESS' or
 			locType == 'FEAR_MECHANIC' or
 			locType == 'CONFUSE' or
-			locType == 'FEAR' then
+			locType == 'FEAR' or
+			locType == 'CHARM' then
 			strongControl = true
 			if wcAlert then
 				SendChatMessage('['..C_LossOfControl.GetActiveLossOfControlData(eventIndex).displayText..'],还剩'..(math.floor(C_LossOfControl.GetActiveLossOfControlData(eventIndex).timeRemaining  * 10 + 0.5) / 10)..'秒,类型是'..C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType..',能解吗？不能解,但是可以忍过去,所以问题不大', 'EMOTE')
