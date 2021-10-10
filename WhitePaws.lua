@@ -487,7 +487,7 @@ end
 function shift(r, e, m)
 	r = r or 200
 	e = e or 200
-	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or getRage() < r or getEnergy() < e) then
+	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or getRage() < r and getEnergy() < e) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
