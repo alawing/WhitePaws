@@ -32,6 +32,8 @@ local function wcInit()
 	SELECTED_CHAT_FRAME:AddMessage('---------------------')
 	WhitePaws_Command()
 	autoUnshift()
+	autoUnshiftFrame:Show()
+	autoUnshiftFrame:EnableMouse(false)
 end
 
 local initFrame = CreateFrame('Frame')
@@ -273,9 +275,9 @@ function autoUnshift()
         autoUnshiftFrame:SetAllPoints(TaxiRouteMap)
         autoUnshiftFrame:SetSize(16,16)
         autoUnshiftFrame:SetPoint('TOPLEFT',0,0)
-        autoUnshiftFrame:EnableMouse(true)
+        autoUnshiftFrame:EnableMouse(false)
         autoUnshiftFrame:SetFrameLevel(3)
-        autoUnshiftFrame:Hide()
+        autoUnshiftFrame:Show()
         autoUnshiftFrame:SetScript("OnUpdate",function(self,motion)
         	autoCancelShapeshiftForm()
         	FlightPoint = FlightPoint or 1
@@ -315,13 +317,12 @@ end
 
 --解除德鲁伊变形
 function autoCancelShapeshiftForm()
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not dsfFlightMaster) then
-    elseif GetShapeshiftFormID() then
-        autoUnshiftFrame:Show()
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then return end
+    if GetShapeshiftFormID() then
         local num = NumTaxiNodes() or 17
         for i = 1, num, 1 do
             FlightPoint = 0
-            local name = TaxiNodeName(i)
+            local name = TaxiNodeName(i) or "暴风城，艾尔文森林"
             if name == GameTooltipTextLeft1:GetText() then
                 FlightPoint = i
                 FlightPointButton = _G["TaxiButton"..i]
@@ -341,7 +342,7 @@ autoCancelShapeshiftFormFrame:SetScript("OnEvent",autoCancelShapeshiftForm)
 --解除诺格弗格药剂（骷髅）和熊怪形态的变形
 --诺格弗格药剂（骷髅）:16591  熊怪形态:6405
 function autoCancelShapeshift()
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not dsfFlightMaster) then
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then
     else
         local i = 1
         while i <= 32 do
@@ -355,15 +356,6 @@ function autoCancelShapeshift()
         end
     end
 end
-
-local function unShiftBeforeTaxi()
-	SELECTED_CHAT_FRAME:AddMessage('准备上飞机')
-end
-
-local taxiFrame = CreateFrame('Frame')
-
-taxiFrame:RegisterEvent('TAXIMAP_OPENED')
-taxiFrame:SetScript('OnEvent', unShiftBeforeTaxi)
 
 --移动速度小框体
 function showSpeed()
