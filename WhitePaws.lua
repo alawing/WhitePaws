@@ -276,14 +276,13 @@ function autoUnshift()
         autoUnshiftFrame:Show()
         autoUnshiftFrame:SetScript("OnUpdate",function(self,motion)
         	autoCancelShapeshiftForm()
-        	FlightPoint = FlightPoint or 1
-        	if MouseIsOver(FlightPointButton) then
+        	FlightPoint = FlightPoint or 0
+        	if GetShapeshiftFormID() and MouseIsOver(FlightPointButton) then
             		TaxiNodeOnButtonEnter(FlightPointButton)
             		autoUnshiftFrame:EnableMouse(true)
         	end
-        	if not MouseIsOver(FlightPointButton) then
+        	if (not GetShapeshiftFormID()) or (not MouseIsOver(FlightPointButton)) then
             		autoUnshiftFrame:EnableMouse(false)
-            		TaxiNodeOnButtonLeave(FlightPointButton)
         	end
     	end)
     	autoUnshiftFrame:SetScript("OnLeave",function()
@@ -325,8 +324,6 @@ function autoCancelShapeshiftForm()
                 break
             end
         end
-    elseif autoUnshiftFrame then
-        autoUnshiftFrame:Hide()
     end
 end
 
