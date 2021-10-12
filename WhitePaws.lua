@@ -31,6 +31,9 @@ local function wcInit()
 	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
 	SELECTED_CHAT_FRAME:AddMessage('---------------------')
 	WhitePaws_Command()
+	autoUnshift()
+	autoUnshiftFrame:Show()
+	autoUnshiftFrame:EnableMouse(false)
 end
 
 local initFrame = CreateFrame('Frame')
@@ -261,41 +264,37 @@ boostFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 boostFrame:SetScript('OnEvent', changeBoostTrinket)
 
 --点击飞行点地图时自动取消变形
-local function autoUnshift()
+function autoUnshift()
     local texture_str = 'Interface\\TARGETINGFRAME\\UI-StatusBar'
     if InCombatLockdown() then return end
     if not autoUnshiftFrame then
         autoUnshiftFrame = CreateFrame('Button', 'unshiftMacroButton', UIParent, 'SecureActionButtonTemplate')
         autoUnshiftFrame:SetAttribute('type1', 'macro')
-        autoUnshiftFrame:SetAttribute('macrotext1','/cancelform\n/script autoUnshiftFrame:EnableMouse(false)')
-        autoUnshiftFrame.bg = autoUnshiftFrame:CreateTexture(nil,'BACKGROUND', nil, -5)
-        autoUnshiftFrame.bg:SetTexture(texture_str)
-        autoUnshiftFrame.bg:SetVertexColor(0.2,0.1,0,0.0)
-        autoUnshiftFrame.bg:SetAllPoints(autoUnshiftFrame)
+        autoUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoCancelShapeshift()\n/script TakeTaxiNode(FlightPoint)')
         autoUnshiftFrame:SetParent(TaxiRouteMap)
         autoUnshiftFrame:SetAllPoints(TaxiRouteMap)
-        autoUnshiftFrame:SetSize(320,350)
+        autoUnshiftFrame:SetSize(16,16)
         autoUnshiftFrame:SetPoint('TOPLEFT',0,0)
-        autoUnshiftFrame:EnableMouse(true)
-        autoUnshiftFrame:RegisterForClicks('LeftButtonUp')
+        autoUnshiftFrame:EnableMouse(false)
         autoUnshiftFrame:SetFrameLevel(3)
-        autoUnshiftFrame.tip = CreateFrame('GameTooltip','autoUnshiftTooltip',nil,'GameTooltipTemplate')
-        autoUnshiftFrame.tip:SetAllPoints(autoUnshiftFrame)
         autoUnshiftFrame:Show()
-        autoUnshiftFrame:SetScript('OnEnter',function(self)
-            autoUnshiftFrame.tip:SetOwner(self,'ANCHOR_CURSOR')
-            autoUnshiftFrame.tip:AddLine('点击飞行点地图可以解除变形')
-            --autoUnshiftFrame.tip:Show()
-        end)
-        autoUnshiftFrame:SetScript('OnLeave',function(self)
-            autoUnshiftFrame.tip:Hide()
-        end)
-        return
-    elseif GetShapeshiftFormID() then
-        autoUnshiftFrame:Show()
-        autoUnshiftFrame:EnableMouse(true)
-        return
-    end
+        autoUnshiftFrame:SetScript("OnUpdate",function(self,motion)
+        	autoCancelShapeshiftForm()
+        	FlightPoint = FlightPoint or 1
+        	if MouseIsOver(FlightPointButton) then
+            		TaxiNodeOnButtonEnter(FlightPointButton)
+            		autoUnshiftFrame:EnableMouse(true)
+        	end
+        	if not MouseIsOver(FlightPointButton) then
+            		autoUnshiftFrame:EnableMouse(false)
+            		TaxiNodeOnButtonLeave(FlightPointButton)
+        	end
+    	end)
+    	autoUnshiftFrame:SetScript("OnLeave",function()
+        	autoUnshiftFrame:EnableMouse(false)
+        	TaxiNodeOnButtonLeave(FlightPointButton)
+    	end)
+	end
 end
 
 --侦测'你不能在变形状态下使用空中运输服务！'红字错误，然后打开自动解除变形
@@ -307,22 +306,55 @@ dummy = UIErrorsFrame.AddMessage
 UIErrorsFrame.AddMessage = function(self, msg, ...)
     if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then
     elseif (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) and GetShapeshiftFormID() then
+        autoCancelShapeshiftForm()
         autoUnshift()
-        C_Timer.After(0.8, function() autoUnshiftFrame:EnableMouse(false) end)
     end
     if (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) then
+        autoCancelShapeshift()
+    end
+    dummy(UIErrorsFrame, msg, ...)
+end
+
+--解除德鲁伊变形
+function autoCancelShapeshiftForm()
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then return end
+    if GetShapeshiftFormID() then
+        local num = NumTaxiNodes() or 17
+        for i = 1, num, 1 do
+            FlightPoint = 0
+            local name = TaxiNodeName(i) or "暴风城，艾尔文森林"
+            if name == GameTooltipTextLeft1:GetText() then
+                FlightPoint = i
+                FlightPointButton = _G["TaxiButton"..i]
+                break
+            end
+        end
+    elseif autoUnshiftFrame then
+        autoUnshiftFrame:Hide()
+    end
+end
+
+local autoCancelShapeshiftFormFrame = CreateFrame("frame")
+autoCancelShapeshiftFormFrame:RegisterEvent("TAXIMAP_OPENED")
+autoCancelShapeshiftFormFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+autoCancelShapeshiftFormFrame:SetScript("OnEvent",autoCancelShapeshiftForm)
+
+--解除诺格弗格药剂（骷髅）和熊怪形态的变形
+--诺格弗格药剂（骷髅）:16591  熊怪形态:6405
+function autoCancelShapeshift()
+    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then
+    else
         local i = 1
         while i <= 32 do
-            local name, _, _, _, _, _, _, _, _, spellId = UnitBuff('player', i)
+            local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
             if spellId == 16591 or spellId == 6405 then
-                CancelUnitBuff('player', i)
+                CancelUnitBuff("player", i)
             elseif spellId == nil then
                 break
             end
             i = i + 1
         end
     end
-    dummy(UIErrorsFrame, msg, ...)
 end
 
 --移动速度小框体
