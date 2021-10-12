@@ -4,8 +4,6 @@ local function WhitePaws_Command(arg1)
 		wcAlert = not wcAlert
 	elseif arg1 == 'bg' then
 		wcIsInInstance = not wcIsInInstance
-	elseif arg1 == 'fly' then
-		wcFlightMaster = not wcFlightMaster
 	elseif arg1 == 'speed' then
 		wcSpeed = not wcSpeed
 		showSpeed()
@@ -13,7 +11,6 @@ local function WhitePaws_Command(arg1)
 	SELECTED_CHAT_FRAME:AddMessage((wcAlert and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc alert 开关被控通告功能',255,255,0)
 	SELECTED_CHAT_FRAME:AddMessage((wcIsInInstance and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc bg 开关副本/战场内自动马鞭功能',255,255,0)
 	SELECTED_CHAT_FRAME:AddMessage((wcSpeed and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc speed 开关小地图右下方移动速度显示框体',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage((wcFlightMaster and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc fly 开关点击飞行点地图自动取消变形功能',255,255,0)
 	SELECTED_CHAT_FRAME:AddMessage('/wc 查看命令帮助',255,255,0)
 end
 
@@ -24,7 +21,6 @@ SLASH_WHITEPAWS2 = '/wc'
 local function wcInit()
 	wcAlert = wcAlert or false
 	wcIsInInstance = wcIsInInstance or false
-	wcFlightMaster = wcFlightMaster or true
 	wcSpeed = wcSpeed or false
 	local title = select(2, GetAddOnInfo('whitepaws'))
 	SELECTED_CHAT_FRAME:AddMessage('---------------------')
@@ -280,14 +276,13 @@ function autoUnshift()
         autoUnshiftFrame:Show()
         autoUnshiftFrame:SetScript("OnUpdate",function(self,motion)
         	autoCancelShapeshiftForm()
-        	FlightPoint = FlightPoint or 1
-        	if MouseIsOver(FlightPointButton) then
+        	FlightPoint = FlightPoint or 0
+        	if GetShapeshiftFormID() and MouseIsOver(FlightPointButton) then
             		TaxiNodeOnButtonEnter(FlightPointButton)
             		autoUnshiftFrame:EnableMouse(true)
         	end
-        	if not MouseIsOver(FlightPointButton) then
+        	if (not GetShapeshiftFormID()) or (not MouseIsOver(FlightPointButton)) then
             		autoUnshiftFrame:EnableMouse(false)
-            		TaxiNodeOnButtonLeave(FlightPointButton)
         	end
     	end)
     	autoUnshiftFrame:SetScript("OnLeave",function()
@@ -304,7 +299,7 @@ end
 --诺格弗格药剂（骷髅）:16591  熊怪形态:6405
 dummy = UIErrorsFrame.AddMessage
 UIErrorsFrame.AddMessage = function(self, msg, ...)
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then
+    if InCombatLockdown() or NumTaxiNodes() == 0 then
     elseif (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) and GetShapeshiftFormID() then
         autoCancelShapeshiftForm()
         autoUnshift()
@@ -317,7 +312,7 @@ end
 
 --解除德鲁伊变形
 function autoCancelShapeshiftForm()
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then return end
+    if InCombatLockdown() or NumTaxiNodes() == 0 then return end
     if GetShapeshiftFormID() then
         local num = NumTaxiNodes() or 17
         for i = 1, num, 1 do
@@ -329,8 +324,6 @@ function autoCancelShapeshiftForm()
                 break
             end
         end
-    elseif autoUnshiftFrame then
-        autoUnshiftFrame:Hide()
     end
 end
 
@@ -342,7 +335,7 @@ autoCancelShapeshiftFormFrame:SetScript("OnEvent",autoCancelShapeshiftForm)
 --解除诺格弗格药剂（骷髅）和熊怪形态的变形
 --诺格弗格药剂（骷髅）:16591  熊怪形态:6405
 function autoCancelShapeshift()
-    if InCombatLockdown() or NumTaxiNodes() == 0 or (not wcFlightMaster) then
+    if InCombatLockdown() or NumTaxiNodes() == 0 then
     else
         local i = 1
         while i <= 32 do
