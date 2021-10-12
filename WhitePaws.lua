@@ -277,11 +277,12 @@ function autoUnshift()
         autoUnshiftFrame:SetScript("OnUpdate",function(self,motion)
         	autoCancelShapeshiftForm()
         	FlightPoint = FlightPoint or 0
-        	if GetShapeshiftFormID() and MouseIsOver(FlightPointButton) then
+        	if not FlightPointButton then return end
+        	if (Shapeshifted or GetShapeshiftFormID()) and MouseIsOver(FlightPointButton) then
             		TaxiNodeOnButtonEnter(FlightPointButton)
             		autoUnshiftFrame:EnableMouse(true)
         	end
-        	if (not GetShapeshiftFormID()) or (not MouseIsOver(FlightPointButton)) then
+        	if (not Shapeshifted and not GetShapeshiftFormID()) or (not MouseIsOver(FlightPointButton)) then
             		autoUnshiftFrame:EnableMouse(false)
         	end
     	end)
@@ -292,28 +293,20 @@ function autoUnshift()
 	end
 end
 
---侦测'你不能在变形状态下使用空中运输服务！'红字错误，然后打开自动解除变形
---ERR_TAXIPLAYERMOVING = '你正在移动。'
---ERR_TAXIPLAYERSHAPESHIFTED = '你不能在变形状态下使用空中运输服务！'
---ERR_TAXISAMENODE = '你已经在那里了！'
---诺格弗格药剂（骷髅）:16591  熊怪形态:6405
-dummy = UIErrorsFrame.AddMessage
-UIErrorsFrame.AddMessage = function(self, msg, ...)
-    if InCombatLockdown() or NumTaxiNodes() == 0 then
-    elseif (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) and GetShapeshiftFormID() then
-        autoCancelShapeshiftForm()
-        autoUnshift()
-    end
-    if (msg == ERR_TAXIPLAYERMOVING or msg == ERR_TAXIPLAYERSHAPESHIFTED or msg == ERR_TAXISAMENODE) then
-        autoCancelShapeshift()
-    end
-    dummy(UIErrorsFrame, msg, ...)
-end
-
 --解除德鲁伊变形
 function autoCancelShapeshiftForm()
     if InCombatLockdown() or NumTaxiNodes() == 0 then return end
-    if GetShapeshiftFormID() then
+    local i = 1
+    Shapeshifted = false
+    while i <= 32 do
+    	local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
+    	if spellId == 16591 or spellId == 6405 then
+    		Shapeshifted = true
+    		break
+    	end
+    	i = i + 1
+    end
+    if Shapeshifted or GetShapeshiftFormID() then
         local num = NumTaxiNodes() or 17
         for i = 1, num, 1 do
             FlightPoint = 0
@@ -326,10 +319,6 @@ function autoCancelShapeshiftForm()
         end
     end
 end
-
-local autoCancelShapeshiftFormFrame = CreateFrame("frame")
-autoCancelShapeshiftFormFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-autoCancelShapeshiftFormFrame:SetScript("OnEvent",autoCancelShapeshiftForm)
 
 --解除诺格弗格药剂（骷髅）和熊怪形态的变形
 --诺格弗格药剂（骷髅）:16591  熊怪形态:6405
