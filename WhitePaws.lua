@@ -392,11 +392,14 @@ local function getMana()
 end
 
 local function getRage()
+	if GetShapeshiftFormID() ~= 5 and GetShapeshiftFormID() ~= 8  then
+		return 0
+	end
 	return UnitPower('player', 1)
 end
 
 local function getEnergy()
-	if GetShapeshiftForm() ~= 3 then
+	if GetShapeshiftFormID() ~= 1 then
 		return 0
 	end
 	return UnitPower('player', 3)
