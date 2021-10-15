@@ -18,25 +18,6 @@ SlashCmdList['WHITEPAWS'] = WhitePaws_Command
 SLASH_WHITEPAWS1 = '/whitepaws'
 SLASH_WHITEPAWS2 = '/wc'
 
-local function wcInit()
-	wcAlert = wcAlert or false
-	wcIsInInstance = wcIsInInstance or false
-	wcSpeed = wcSpeed or false
-	local title = select(2, GetAddOnInfo('whitepaws'))
-	SELECTED_CHAT_FRAME:AddMessage('---------------------')
-	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('---------------------')
-	WhitePaws_Command()
-	autoUnshift()
-	autoUnshiftFrame:Show()
-	autoUnshiftFrame:EnableMouse(false)
-end
-
-local initFrame = CreateFrame('Frame')
-
-initFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
-initFrame:SetScript('OnEvent', wcInit)
-
 local function getLatency()
 	return select(4, GetNetStats()) / 1000
 end
@@ -260,7 +241,9 @@ boostFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
 boostFrame:SetScript('OnEvent', changeBoostTrinket)
 
 --点击飞行点地图时自动取消变形
-function autoUnshift()
+local Shapeshifted, FlightPointButton, autoUnshiftFrame
+
+local function autoUnshift()
     local texture_str = 'Interface\\TARGETINGFRAME\\UI-StatusBar'
     if InCombatLockdown() then return end
     if not autoUnshiftFrame then
@@ -296,16 +279,17 @@ end
 --解除德鲁伊变形
 function autoCancelShapeshiftForm()
     if InCombatLockdown() or NumTaxiNodes() == 0 then return end
-    local i = 1
-    Shapeshifted = false
-    while i <= 32 do
-    	local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
+	local i = 1
+	Shapeshifted = false
+	while UnitBuff('player', i) do
+		local spellId = select(10, UnitBuff('player', i))
     	if spellId == 16591 or spellId == 6405 then
     		Shapeshifted = true
     		break
     	end
-    	i = i + 1
-    end
+		i = i + 1
+	end
+
     if Shapeshifted or GetShapeshiftFormID() then
         local num = NumTaxiNodes() or 17
         for i = 1, num, 1 do
@@ -326,15 +310,13 @@ function autoCancelShapeshift()
     if InCombatLockdown() or NumTaxiNodes() == 0 then
     else
         local i = 1
-        while i <= 32 do
-            local name, _, _, _, _, _, _, _, _, spellId = UnitBuff("player", i)
-            if spellId == 16591 or spellId == 6405 then
+		while UnitBuff('player', i) do
+			local spellId = select(10, UnitBuff('player', i))
+			if spellId == 16591 or spellId == 6405 then
                 CancelUnitBuff("player", i)
-            elseif spellId == nil then
-                break
-            end
-            i = i + 1
-        end
+			end
+			i = i + 1
+		end
     end
 end
 
@@ -515,3 +497,22 @@ function wcEnd()
 	SetCVar('autoUnshift', 1)
 	UIErrorsFrame:Clear()
 end
+
+local function wcInit()
+	wcAlert = wcAlert or false
+	wcIsInInstance = wcIsInInstance or false
+	wcSpeed = wcSpeed or false
+	local title = select(2, GetAddOnInfo('whitepaws'))
+	SELECTED_CHAT_FRAME:AddMessage('---------------------')
+	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
+	SELECTED_CHAT_FRAME:AddMessage('---------------------')
+	WhitePaws_Command()
+	autoUnshift()
+	autoUnshiftFrame:Show()
+	autoUnshiftFrame:EnableMouse(false)
+end
+
+local initFrame = CreateFrame('Frame')
+
+initFrame:RegisterEvent('PLAYER_LOGIN')
+initFrame:SetScript('OnEvent', wcInit)
