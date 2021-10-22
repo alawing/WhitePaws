@@ -10,4 +10,5 @@
 ## SavedVariables: wcFlightMaster
 ## SavedVariables: wcSpeed
 
+PowerSpark.lua
 WhitePaws.lua

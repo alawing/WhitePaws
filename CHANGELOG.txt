@@ -68,3 +68,5 @@
 -- DISARM 缴械
 -- FEAR 惊骇
 -- CHARM 魅惑
+-- PACIFY 平静
+
