@@ -35,6 +35,14 @@ local function GetControls(self, event, ...)
 	strongControl = false
 	rooted = false
 
+	if event == 'PLAYER_CONTROL_LOST' then
+		SELECTED_CHAT_FRAME:AddMessage('哟失去控制了')
+		return
+	end
+	if event == 'PLAYER_CONTROL_GAINED' then
+		SELECTED_CHAT_FRAME:AddMessage('哟又能控制了')
+		return
+	end
 	local eventIndex = C_LossOfControl.GetActiveLossOfControlDataCount()
 	while (eventIndex > 0) do
 		local locType = C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType
@@ -73,6 +81,8 @@ end
 local controlFrame = CreateFrame('Frame')
 
 controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an control
+controlFrame:RegisterEvent('PLAYER_CONTROL_LOST') -- the player current target recently gained or lost an control
+controlFrame:RegisterEvent('PLAYER_CONTROL_GAINED') -- the player current target recently gained or lost an control
 controlFrame:SetScript('OnEvent', GetControls)
 
 --触发：变形,移动,BUFF,换过装备,变形,脱战
@@ -330,6 +340,14 @@ function dpsx(cost)
 	end
 end
 
+--输出，考虑延迟，省蓝
+function dpsl(cost)
+	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergy(cost-20)) then
+		SetCVar('autoUnshift', 1)
+	else
+		SetCVar('autoUnshift', 0)
+	end
+end
 
 --变身
 function shift(r, e, m)
