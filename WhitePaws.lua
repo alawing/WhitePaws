@@ -322,7 +322,7 @@ end
 
 --公共函数
 
---输出，考虑延迟
+--输出，自动解定身，考虑延迟
 function dps(cost)
 	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
@@ -331,7 +331,16 @@ function dps(cost)
 	end
 end
 
---老款输出，不考虑延迟
+--PvP输出，自动解定身减速，考虑延迟，一键打法师
+function dpsp(cost)
+	if not strongControl and enoughMana() and (((rooted or select(2, GetUnitSpeed('player')) < 7) and not IsStealthed()) and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergywithNextTick(cost)) then
+		SetCVar('autoUnshift', 1)
+	else
+		SetCVar('autoUnshift', 0)
+	end
+end
+
+--老款输出，自动解定身，不考虑延迟
 function dpsx(cost)
 	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
@@ -340,7 +349,7 @@ function dpsx(cost)
 	end
 end
 
---输出，考虑延迟，省蓝
+--输出，自动解定身，考虑延迟，省蓝
 function dpsl(cost)
 	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergy(cost-20)) then
 		SetCVar('autoUnshift', 1)
