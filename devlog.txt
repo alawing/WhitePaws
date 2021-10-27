@@ -10,7 +10,8 @@ SCHOOL_INTERRUPT 打断
 SILENCE 变形 沉默
 DISARM 缴械
 FEAR 惊骇
-
+CHARM 魅惑
+PACIFY 平静
 
 
 /run print(nextTick)

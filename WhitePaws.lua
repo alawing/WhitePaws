@@ -35,11 +35,11 @@ local function GetControls(self, event, ...)
 	strongControl = false
 	rooted = false
 
-	if event == 'PLAYER_CONTROL_LOST' then
+	if event == 'PLAYER_CONTROL_LOST' and wcAlert then
 		SELECTED_CHAT_FRAME:AddMessage('哟失去控制了')
 		return
 	end
-	if event == 'PLAYER_CONTROL_GAINED' then
+	if event == 'PLAYER_CONTROL_GAINED' and wcAlert then
 		SELECTED_CHAT_FRAME:AddMessage('哟又能控制了')
 		return
 	end
