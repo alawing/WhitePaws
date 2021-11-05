@@ -288,6 +288,22 @@ local function getBuff(name)
 	return false
 end
 
+lastpower = UnitPower('player', 3)
+--回能
+local function calcTick(self, event, unit, type)
+	if (unit ~= 'player' or type ~= 'ENERGY') then
+		local power = UnitPower('player', 3)
+		if power > lastpower and (power == 100 or power - lastpower == 20 or power - lastpower == 21) then
+			LastTick = GetTime()
+		end
+		lastpower = power
+	end
+end
+
+tickframe = CreateFrame("Frame", nil)
+tickframe:RegisterEvent('UNIT_POWER_FREQUENT')
+tickframe:SetScript('OnEvent', calcTick)
+
 local function enoughMana(cost)
 	if cost == nil then
 		cost = GetSpellPowerCost(768)[1].cost
@@ -303,13 +319,22 @@ local function enoughEnergy(cost)
 end
 
 local function enoughEnergywithNextTick(cost)
+	nextTick = 2 - mod(GetTime() - LastTick, 2)
 	if wc.clearcasting then
 		return true
 	end
 	local e = getEnergy()
-	if wc.nextTick + getLatency() / 2 >= 2 or wc.nextTick - getLatency() / 2 <= 0 then e = e + 20 end
+	if nextTick + getLatency() / 2 >= 2 or nextTick - getLatency() / 2 <= 0 then e = e + 20 end
 	if e >= cost then return true end
-	if e + 20 >= cost and wc.nextTick - getLatency() / 2 <= 1.5 then return true end
+	if e + 20 >= cost and nextTick - getLatency() / 2 <= 1.5 then return true end
+	return false
+end
+
+local function enoughEnergywithNextTickNoDelay(cost)
+	nextTick = 2 - mod(GetTime() - LastTick, 2)
+	if enoughEnergy(cost) then return true end
+	local e = getEnergy()
+	if e + 20 >= cost and nextTick <= 1.5 then return true end
 	return false
 end
 
@@ -320,11 +345,21 @@ local function enoughRage(cost)
 	return getRage() >= cost
 end
 
+local function needUnroot()
+	--打得着并且不是boss
+	if IsSpellInRange('爪击', 'target') == 1 and UnitLevel('target') ~= -1 then
+		return false
+	--定身或者减速了
+	elseif rooted then return true
+	elseif select(2, GetUnitSpeed('player')) < 7 and not IsStealthed() then return true
+	else return false end
+end
+
 --公共函数
 
 --输出，自动解定身，考虑延迟
 function dps(cost)
-	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergywithNextTick(cost)) then
+	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -333,7 +368,7 @@ end
 
 --PvP输出，自动解定身减速，考虑延迟，一键打法师
 function dpsp(cost)
-	if not strongControl and enoughMana() and (((rooted or select(2, GetUnitSpeed('player')) < 7) and not IsStealthed()) and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergywithNextTick(cost)) then
+	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergywithNextTickNoDelay(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -342,7 +377,7 @@ end
 
 --老款输出，自动解定身，不考虑延迟
 function dpsx(cost)
-	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
+	if not strongControl and enoughMana() and (needUnroot() or not getShiftGCD() and not enoughEnergywithNextTickNoDelay(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -351,7 +386,7 @@ end
 
 --输出，自动解定身，考虑延迟，省蓝
 function dpsl(cost)
-	if not strongControl and enoughMana() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1)  or ableShift() and not enoughEnergy(cost-20)) then
+	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergy(cost-20)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -362,7 +397,7 @@ end
 function shift(r, e, m)
 	r = r or 200
 	e = e or 200
-	if not strongControl and enoughMana(m) and not getShiftGCD() and (rooted and (IsSpellInRange('爪击', 'target') ~= 1 or UnitLevel('target') == -1) or getRage() < r and getEnergy() < e) then
+	if not strongControl and enoughMana(m) and not getShiftGCD() and (needUnroot() or getRage() < r and getEnergy() < e) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
