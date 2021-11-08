@@ -60,7 +60,6 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			end
 			power:HookScript('OnUpdate', function(self)
 				local now = GetTime()
-				wc.nextTick = 2 - mod(now - self.timer, 2)
 				if now < self.rate then return end
 				self.rate = now + 0.02 --刷新率
 				if self.hide(self.key) then

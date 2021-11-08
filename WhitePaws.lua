@@ -26,7 +26,6 @@ end
 
 wc.clearcasting = false
 local flying = false
-wc.nextTick = 2
 
 --判断控制
 local strongControl, rooted
@@ -256,7 +255,7 @@ local function getShiftLeftTime()
 end
 
 local function ableShift()
-	return getShiftLeftTime() <= getLatency() / 2
+	return getShiftLeftTime() <= getLatency()
 end
 
 local function getMana()
@@ -325,19 +324,19 @@ local function enoughEnergy(cost)
 	return getEnergy() >= cost
 end
 
-local function enoughEnergywithNextTick(cost)
+local function enoughEnergywithNextTickwithDelay(cost)
 	nextTick = 2 - mod(GetTime() - LastTick, 2)
 	if wc.clearcasting then
 		return true
 	end
 	local e = getEnergy()
-	if nextTick + getLatency() / 2 >= 2 or nextTick - getLatency() / 2 <= 0 then e = e + 20 end
+	if nextTick - getLatency() <= 0 then e = e + 20 end
 	if e >= cost then return true end
-	if e + 20 >= cost and nextTick - getLatency() / 2 <= 1.5 then return true end
+	if e + 20 >= cost and nextTick - getLatency() <= 1.5 then return true end
 	return false
 end
 
-local function enoughEnergywithNextTickNoDelay(cost)
+local function enoughEnergywithNextTick(cost)
 	nextTick = 2 - mod(GetTime() - LastTick, 2)
 	if enoughEnergy(cost) then return true end
 	local e = getEnergy()
@@ -364,7 +363,7 @@ end
 
 --公共函数
 
---输出，自动解定身，考虑延迟
+--输出，自动解定身减速，考虑延迟
 function dps(cost)
 	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
@@ -373,25 +372,25 @@ function dps(cost)
 	end
 end
 
---PvP输出，自动解定身减速，考虑延迟，一键打法师
+--输出，自动解定身减速，考虑延迟和能量延迟
 function dpsp(cost)
-	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergywithNextTickNoDelay(cost)) then
+	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergywithNextTickwithDelay(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
 	end
 end
 
---老款输出，自动解定身，不考虑延迟
+--输出，自动解定身减速，不考虑延迟
 function dpsx(cost)
-	if not strongControl and enoughMana() and (needUnroot() or not getShiftGCD() and not enoughEnergywithNextTickNoDelay(cost)) then
+	if not strongControl and enoughMana() and (needUnroot() or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
 	end
 end
 
---输出，自动解定身，考虑延迟，省蓝
+--输出，自动解定身减速，考虑延迟，省蓝
 function dpsl(cost)
 	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergy(cost-20)) then
 		SetCVar('autoUnshift', 1)
