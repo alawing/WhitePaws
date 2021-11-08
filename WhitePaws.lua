@@ -288,19 +288,26 @@ local function getBuff(name)
 	return false
 end
 
-lastpower = UnitPower('player', 3)
+local lastPower = UnitPower('player', 3)
+local notNormalTick = GetTime()
 --回能
 local function calcTick(self, event, unit, type)
-	if (unit ~= 'player' or type ~= 'ENERGY') then
+	if (event == 'COMBAT_LOG_EVENT_UNFILTERED') then
+		local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
+		if subevent == 'SPELL_ENERGIZE' then
+			notNormalTick = GetTime()
+		end
+	elseif (unit ~= 'player' or type ~= 'ENERGY') then
 		local power = UnitPower('player', 3)
-		if power > lastpower and (power == 100 or power - lastpower == 20 or power - lastpower == 21) then
+		if power > lastPower and (power == 100 or power - lastPower == 20 or power - lastPower == 21) and notNormalTick ~= GetTime() then
 			LastTick = GetTime()
 		end
-		lastpower = power
+		lastPower = power
 	end
 end
 
 tickframe = CreateFrame("Frame", nil)
+tickframe:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 tickframe:RegisterEvent('UNIT_POWER_FREQUENT')
 tickframe:SetScript('OnEvent', calcTick)
 
