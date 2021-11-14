@@ -1,13 +1,14 @@
 local addonName, wc = ...
 
 local class = select(2, UnitClass('player'))
+local notNormalTick = GetTime()
 local frame = CreateFrame('Frame')
 for _, item in pairs({
 	'PLAYER_ENTERING_WORLD',
 	'UNIT_AURA',
-	'UPDATE_SHAPESHIFT_FORM',
 	'UNIT_SPELLCAST_SUCCEEDED',
 	'UNIT_POWER_FREQUENT',
+	'COMBAT_LOG_EVENT_UNFILTERED'
 }) do
 	frame:RegisterEvent(item, 'player')
 end
@@ -20,14 +21,19 @@ frame:SetScript('OnEvent', function(self, event, ...)
 		end
 		function self.rest(key, event, unit, powerType)
 			local cure, type = self.cure(key)
-			if event == 'UPDATE_SHAPESHIFT_FORM' and class == 'DRUID' then --小德变身
-				self[key].cure = cure
-				self[key].timer = GetTime()
+			if event == 'COMBAT_LOG_EVENT_UNFILTERED' then --小德变身
+				local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
+				if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
+					notNormalTick = GetTime()
+					self[key].cure = cure
+				end
 			elseif event == 'UNIT_POWER_FREQUENT' and unit == 'player' then -- 能量/法力更新
 				if cure > self[key].cure then
 					self[key].cure = cure
-					self[key].timer = GetTime()
-					PowerSparkDB[key].timer = self[key].timer
+					if notNormalTick ~= GetTime() then
+						self[key].timer = GetTime()
+						PowerSparkDB[key].timer = self[key].timer
+					end
 				end
 			elseif event == 'UNIT_SPELLCAST_SUCCEEDED' and unit == 'player' then -- 施法成功
 				if cure < self[key].cure and type == 0 then self[key].wait = GetTime() + 5 end -- 5秒回蓝

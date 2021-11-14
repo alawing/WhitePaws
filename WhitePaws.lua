@@ -28,18 +28,42 @@ wc.clearcasting = false
 local flying = false
 
 --判断控制
-local strongControl, rooted
+local strongControl, rooted, bossControl = false
 
-local function GetControls(self, event, ...)
+local function GetControls(self, event, unit, ...)
 	strongControl = false
 	rooted = false
 
-	if event == 'PLAYER_CONTROL_LOST' and wcAlert then
-		SELECTED_CHAT_FRAME:AddMessage('哟失去控制了')
+	if event == 'PLAYER_CONTROL_LOST' then
+		if wcAlert then
+			SELECTED_CHAT_FRAME:AddMessage('哟失去控制了')
+		end
 		return
 	end
-	if event == 'PLAYER_CONTROL_GAINED' and wcAlert then
-		SELECTED_CHAT_FRAME:AddMessage('哟又能控制了')
+	if event == 'PLAYER_CONTROL_GAINED' then
+		if wcAlert then
+			SELECTED_CHAT_FRAME:AddMessage('哟又能控制了')
+		end
+		return
+	end
+	if event == 'UNIT_AURA' then
+		if unit == 'player' then
+			if getAura(33652, 36449) then
+				if not bossControl then
+					strongControl = true
+					bossControl = true
+					if wcAlert then
+						SendChatMessage('BOSS强控，啥也做不了，大家都一样要忍，所以问题不大', 'EMOTE')
+					end
+				end
+			elseif bossControl then
+				strongControl = false
+				bossControl = false
+				if wcAlert then
+					SendChatMessage('BOSS强控结束了，你长吁了一口气，并说道问题不大', 'EMOTE')
+				end
+			end
+		end
 		return
 	end
 	local eventIndex = C_LossOfControl.GetActiveLossOfControlDataCount()
@@ -82,6 +106,7 @@ local controlFrame = CreateFrame('Frame')
 controlFrame:RegisterEvent('LOSS_OF_CONTROL_UPDATE') -- the player current target recently gained or lost an control
 controlFrame:RegisterEvent('PLAYER_CONTROL_LOST') -- the player current target recently gained or lost an control
 controlFrame:RegisterEvent('PLAYER_CONTROL_GAINED') -- the player current target recently gained or lost an control
+controlFrame:RegisterEvent('UNIT_AURA') -- the player current target recently gained or lost an control
 controlFrame:SetScript('OnEvent', GetControls)
 
 --触发：变形,移动,BUFF,换过装备,变形,脱战
@@ -276,10 +301,15 @@ local function getEnergy()
 	return UnitPower('player', 3)
 end
 
-local function getBuff(name)
-	local i = 1
-	while UnitBuff('player', i) do
-		if select(1, UnitBuff('player', i)) == name then
+--格鲁尔石化33652 玛瑟里顿碎片36449 瓦斯琪纠缠38316
+local function getAura(...)
+	local auras = {}, i
+	for i, v in ipairs{...} do
+		auras[v] = true;
+	end
+	i = 1
+	while UnitAura('player', i) do
+		if auras[select(1, UnitAura('player', i))] or auras[select(10, UnitAura('player', i))] then
 			return true
 		end
 		i = i + 1
@@ -293,7 +323,7 @@ local notNormalTick = GetTime()
 local function calcTick(self, event, unit, type)
 	if (event == 'COMBAT_LOG_EVENT_UNFILTERED') then
 		local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
-		if subevent == 'SPELL_ENERGIZE' then
+		if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
 			notNormalTick = GetTime()
 			lastPower = UnitPower('player', 3)
 		end
@@ -352,8 +382,8 @@ local function enoughRage(cost)
 end
 
 local function needUnroot()
-	--打得着并且不是boss
-	if IsSpellInRange('爪击', 'target') == 1 and UnitLevel('target') ~= -1 then
+	--打得着并且不是瓦斯琪纠缠
+	if IsSpellInRange('爪击', 'target') == 1 and not getAura(38316) then
 		return false
 	--定身或者减速了
 	elseif rooted then return true
@@ -364,8 +394,8 @@ end
 --公共函数
 
 --输出，自动解定身减速，考虑延迟
-function dps(cost)
-	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergywithNextTick(cost)) then
+function dps(cost, mana)
+	if not strongControl and enoughMana(mana) and (needUnroot() or ableShift() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -373,8 +403,8 @@ function dps(cost)
 end
 
 --输出，自动解定身减速，考虑延迟和能量延迟
-function dpsp(cost)
-	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergywithNextTickwithDelay(cost)) then
+function dpsp(cost, mana)
+	if not strongControl and enoughMana(mana) and (needUnroot() or ableShift() and not enoughEnergywithNextTickwithDelay(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -382,8 +412,8 @@ function dpsp(cost)
 end
 
 --输出，自动解定身减速，不考虑延迟
-function dpsx(cost)
-	if not strongControl and enoughMana() and (needUnroot() or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
+function dpsx(cost, mana)
+	if not strongControl and enoughMana(mana) and (needUnroot() or not getShiftGCD() and not enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -391,8 +421,8 @@ function dpsx(cost)
 end
 
 --输出，自动解定身减速，考虑延迟，省蓝
-function dpsl(cost)
-	if not strongControl and enoughMana() and (needUnroot() or ableShift() and not enoughEnergy(cost-20)) then
+function dpsl(cost, mana)
+	if not strongControl and enoughMana(mana) and (needUnroot() or ableShift() and not enoughEnergy(cost-20)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -412,7 +442,7 @@ end
 
 --吃蓝，考虑延迟
 function manapot(cost, name)
-	if UnitLevel('target') ~= -1 or not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
+	if not ableShift() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
 		SetCVar('autoUnshift', 0)
 	else
 		SELECTED_CHAT_FRAME:AddMessage('吃药啦！')
@@ -422,7 +452,7 @@ end
 
 --老款吃蓝，不考虑延迟
 function manapotx(cost, name)
-	if UnitLevel('target') ~= -1 or getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
+	if getShiftGCD() or enoughEnergywithNextTick(cost) or strongControl or (UnitPowerMax('player', 0) - getMana()) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
 		SetCVar('autoUnshift', 0)
 	else
 		SetCVar('autoUnshift', 1)
