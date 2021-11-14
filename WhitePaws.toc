@@ -4,10 +4,13 @@
 ## Author: NGA:alawing (失眠者白爪-辛迪加) NGA:cksky
 ## Notes: 白爪cksky辅助插件
 ## SavedVariablesPerCharacter: PowerSparkDB
+## SavedVariablesPerCharacter: LastTick
 ## SavedVariablesPerCharacter: originTrinket
 ## SavedVariables: wcAlert
 ## SavedVariables: wcIsInInstance
-## SavedVariables: wcFlightMaster
 ## SavedVariables: wcSpeed
 
+Tools\PowerSpark.lua
+Tools\Flight.lua
+wcCore.lua
 WhitePaws.lua

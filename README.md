@@ -4,7 +4,7 @@ Only for chinese tbc classic version
 
 1. Help with cat dps skill macro
 Can make macro let it auto detect either spell attack skill or shift form, or using mana pot
-conditions:energy, mana, next tick time, been rooted, or strong control like stun or fear.
+conditions:energy, mana, next tick time, been rooted, slowed, or strong control like stun or fear.
 
 2. Help with bear form
 Can bind auto unroot in skill macros
@@ -22,7 +22,7 @@ input /wc for help and settings
 只能用于中文燃烧的远征怀旧客户端
 1. 猫输出宏
 帮助写出输出宏，自动决定打出技能还是变身，还是吃蓝
-考虑的状态有：能量，法力，下一跳回能时间，是不是被定身，是不是被晕恐惧之类硬控
+考虑的状态有：能量，法力，下一跳回能时间，是不是被定身减速，是不是被晕恐惧之类硬控
 
 2. 熊用的宏
 可以把熊的拉怪宏绑定自动解除定身功能
