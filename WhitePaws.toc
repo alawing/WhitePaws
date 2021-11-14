@@ -8,8 +8,9 @@
 ## SavedVariablesPerCharacter: originTrinket
 ## SavedVariables: wcAlert
 ## SavedVariables: wcIsInInstance
-## SavedVariables: wcFlightMaster
 ## SavedVariables: wcSpeed
 
-PowerSpark.lua
+Tools\PowerSpark.lua
+Tools\Flight.lua
+wcCore.lua
 WhitePaws.lua
