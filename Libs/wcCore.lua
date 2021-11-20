@@ -25,14 +25,14 @@ local function GetControls(self, event, unit, ...)
 					wc.strongControl = true
 					bossControl = true
 					if wcAlert then
-						SendChatMessage('BOSS强控，啥也做不了，大家都一样要忍，所以问题不大', 'PARTY')
+						SendChatMessage('BOSS强控，啥也做不了，大家都一样要忍，所以问题不大', 'EMOTE')
 					end
 				end
 			elseif bossControl then
 				wc.strongControl = false
 				bossControl = false
 				if wcAlert then
-					SendChatMessage('BOSS强控结束了，你长吁了一口气，并说道问题不大', 'PARTY')
+					SendChatMessage('BOSS强控结束了，你长吁了一口气，并说道问题不大', 'EMOTE')
 				end
 			end
 		end
