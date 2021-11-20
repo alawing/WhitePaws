@@ -10,7 +10,8 @@
 ## SavedVariables: wcIsInInstance
 ## SavedVariables: wcSpeed
 
-Tools\PowerSpark.lua
-Tools\Flight.lua
-wcCore.lua
+Libs\PowerSpark.lua
+Libs\Flight.lua
+Libs\Options.lua
+Libs\wcCore.lua
 WhitePaws.lua
