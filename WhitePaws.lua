@@ -54,7 +54,7 @@ function manapot(cost, name)
 	if not wc.ableShift() or wc.enoughEnergywithNextTick(cost) or wc.strongControl or (UnitPowerMax('player', 0) - UnitPower('player', 0)) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
 		SetCVar('autoUnshift', 0)
 	else
-		SELECTED_CHAT_FRAME:AddMessage('吃药啦！')
+		SELECTED_CHAT_FRAME:AddMessage('吃蓝啦！')
 		SetCVar('autoUnshift', 1)
 	end
 end

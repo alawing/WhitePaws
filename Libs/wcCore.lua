@@ -4,9 +4,6 @@ local addonName, wc = ...
 local bossControl = false
 
 local function GetControls(self, event, unit, ...)
-	wc.strongControl = false
-	wc.rooted = false
-
 	if event == 'PLAYER_CONTROL_LOST' then
 		if wcAlert then
 			SELECTED_CHAT_FRAME:AddMessage('哟失去控制了')
@@ -21,26 +18,26 @@ local function GetControls(self, event, unit, ...)
 	end
 	if event == 'UNIT_AURA' then
 		if unit == 'player' then
-			if wc.getAura(33652, 36449) then
-				print(bossControl)
-				print(wc.strongControl)
+			if wc.getDebuff(33652, 36449) then
 				if not bossControl then
 					wc.strongControl = true
 					bossControl = true
 					if wcAlert then
-						SendChatMessage('BOSS强控，啥也做不了，大家都一样要忍，所以问题不大', 'EMOTE')
+						SendChatMessage('被BOSS强控了，啥也做不了，大家都一样要忍，所以问题不大', 'EMOTE')
 					end
 				end
 			elseif bossControl then
 				wc.strongControl = false
 				bossControl = false
 				if wcAlert then
-					SendChatMessage('BOSS强控结束了，你长吁了一口气，并说道问题不大', 'EMOTE')
+					SendChatMessage('被BOSS的强控结束了，你长吁了一口气，并说道问题不大', 'EMOTE')
 				end
 			end
 		end
 		return
 	end
+	wc.strongControl = false
+	wc.rooted = false
 	local eventIndex = C_LossOfControl.GetActiveLossOfControlDataCount()
 	while (eventIndex > 0) do
 		local locType = C_LossOfControl.GetActiveLossOfControlData(eventIndex).locType
@@ -84,45 +81,6 @@ controlFrame:RegisterEvent('PLAYER_CONTROL_GAINED') -- the player current target
 controlFrame:RegisterEvent('UNIT_AURA') -- the player current target recently gained or lost an control
 controlFrame:SetScript('OnEvent', GetControls)
 
-local function WhitePaws_Command(arg1)
-	if arg1 then arg1 = strlower(arg1) end
-	if arg1 == 'alert' then
-		wcAlert = not wcAlert
-	elseif arg1 == 'bg' then
-		wcIsInInstance = not wcIsInInstance
-	elseif arg1 == 'speed' then
-		wcSpeed = not wcSpeed
-		wc.showSpeed()
-	end
-	SELECTED_CHAT_FRAME:AddMessage((wcAlert and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc alert 开关被控通告功能',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage((wcIsInInstance and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc bg 开关副本/战场内自动马鞭功能',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage((wcSpeed and '[|cff00ff00开|r]' or '[|cffff0000关|r]')..'/wc speed 开关小地图右下方移动速度显示框体',255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('/wc 查看命令帮助',255,255,0)
-end
-
-SlashCmdList['WHITEPAWS'] = WhitePaws_Command
-SLASH_WHITEPAWS1 = '/whitepaws'
-SLASH_WHITEPAWS2 = '/wc'
-
-local function wcInit()
-	wcAlert = wcAlert or false
-	wcIsInInstance = wcIsInInstance or false
-	wcSpeed = wcSpeed or false
-	local title = select(2, GetAddOnInfo('whitepaws'))
-	SELECTED_CHAT_FRAME:AddMessage('---------------------')
-	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
-	SELECTED_CHAT_FRAME:AddMessage('---------------------')
-	WhitePaws_Command()
-	wc.autoUnshiftonTaxi()
-	wc.autoUnshiftFrame:Show()
-	wc.autoUnshiftFrame:EnableMouse(false)
-end
-
-local initFrame = CreateFrame('Frame')
-
-initFrame:RegisterEvent('PLAYER_LOGIN')
-initFrame:SetScript('OnEvent', wcInit)
-
 function wc.getLatency()
 	return select(4, GetNetStats()) / 1000
 end
@@ -155,14 +113,14 @@ function wc.getEnergy()
 end
 
 --格鲁尔石化33652 玛瑟里顿碎片36449 瓦斯琪纠缠38316
-function wc.getAura(...)
-	local auras = {}, i, v
+function wc.getDebuff(...)
+	local debuffs = {}, i, v
 	for i, v in ipairs{...} do
-		auras[v] = true;
+		debuffs[v] = true;
 	end
 	i = 1
-	while UnitAura('player', i) do
-		if auras[select(1, UnitAura('player', i))] or auras[select(10, UnitAura('player', i))] then
+	while UnitDebuff('player', i) do
+		if debuffs[select(1, UnitDebuff('player', i))] or debuffs[select(10, UnitDebuff('player', i))] then
 			return true
 		end
 		i = i + 1
@@ -229,7 +187,7 @@ end
 
 function wc.needUnroot()
 	--打得着并且不是瓦斯琪纠缠
-	if IsSpellInRange('爪击', 'target') == 1 and not wc.getAura(38316) then
+	if IsSpellInRange('爪击', 'target') == 1 and not wc.getDebuff(38316) then
 		return false
 	--定身或者减速了
 	elseif wc.rooted then return true
