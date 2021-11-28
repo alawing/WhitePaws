@@ -19,20 +19,18 @@ local function GetControls(self, event, unit, ...)
 	if event == 'UNIT_AURA' then
 		if unit == 'player' then
 			if wc.getDebuff(33652, 36449) then
-				print(bossControl)
-				print(wc.strongControl)
 				if not bossControl then
 					wc.strongControl = true
 					bossControl = true
 					if wcAlert then
-						SendChatMessage('BOSS强控，啥也做不了，大家都一样要忍，所以问题不大', 'EMOTE')
+						SendChatMessage('被BOSS强控了，啥也做不了，大家都一样要忍，所以问题不大', 'EMOTE')
 					end
 				end
 			elseif bossControl then
 				wc.strongControl = false
 				bossControl = false
 				if wcAlert then
-					SendChatMessage('BOSS强控结束了，你长吁了一口气，并说道问题不大', 'EMOTE')
+					SendChatMessage('被BOSS的强控结束了，你长吁了一口气，并说道问题不大', 'EMOTE')
 				end
 			end
 		end
