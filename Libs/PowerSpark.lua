@@ -25,12 +25,11 @@ frame:SetScript('OnEvent', function(self, event, ...)
 				local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
 				if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
 					notNormalTick = GetTime()
-					self[key].cure = cure
 				end
 			elseif event == 'UNIT_POWER_FREQUENT' and unit == 'player' then -- 能量/法力更新
+				self[key].cure = cure
 				if cure > self[key].cure then
-					self[key].cure = cure
-					if notNormalTick ~= GetTime() then
+					if GetTime() - notNormalTick >= 0.02 then
 						self[key].timer = GetTime()
 						PowerSparkDB[key].timer = self[key].timer
 					end

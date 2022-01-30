@@ -43,10 +43,11 @@ local panel = CreateFrame("FRAME")
 panel.name = "WhitePaws"
 InterfaceOptions_AddCategory(panel)
 
-local myCheckButton = CreateFrame("CheckButton", "myCheckButton_GlobalName", panel, "ChatConfigCheckButtonTemplate")
+local myCheckButton = CreateFrame("Button", "myCheckButton_GlobalName", panel, "UIPanelButtonTemplate")
 myCheckButton:SetPoint("TOPLEFT", 200, -65)
-myCheckButton_GlobalNameText:SetText("CheckBox Name")
-myCheckButton.tooltip = "This is where you place MouseOver Text."
+myCheckButton:SetSize(120 ,22)
+myCheckButton_GlobalNameText:SetText("开关被控通报")
+myCheckButton.tooltip = "开关被控通报"
 myCheckButton:SetScript("OnClick", 
   function()
     --do stuff
