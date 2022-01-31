@@ -25,15 +25,19 @@ frame:SetScript('OnEvent', function(self, event, ...)
 				local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
 				if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
 					notNormalTick = GetTime()
-				end
-			elseif event == 'UNIT_POWER_FREQUENT' and unit == 'player' then -- 能量/法力更新
-				self[key].cure = cure
-				if cure > self[key].cure then
-					if GetTime() - notNormalTick >= 0.02 then
-						self[key].timer = GetTime()
-						PowerSparkDB[key].timer = self[key].timer
+					if GetTime() - self[key].timer < 0.02 then
+						self[key].timer = self[key].last
 					end
 				end
+			elseif event == 'UNIT_POWER_FREQUENT' and unit == 'player' then -- 能量/法力更新
+				if cure > self[key].cure and GetTime() - notNormalTick >= 0.02 then
+					if GetTime() - self[key].timer >= 0.02 then
+						self[key].last = self[key].timer
+					end
+					self[key].timer = GetTime()
+					PowerSparkDB[key].timer = self[key].timer
+				end
+				self[key].cure = cure
 			elseif event == 'UNIT_SPELLCAST_SUCCEEDED' and unit == 'player' then -- 施法成功
 				if cure < self[key].cure and type == 0 then self[key].wait = GetTime() + 5 end -- 5秒回蓝
 				self[key].cure = cure
@@ -56,6 +60,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			power.cure = self.cure(key)
 			power.rate = GetTime()
 			power.timer = PowerSparkDB[key].timer or GetTime()
+			power.last = power.timer
 			power.interval = 2
 			power.key = key
 			power.parent = parent

@@ -130,18 +130,25 @@ end
 
 local lastPower = UnitPower('player', 3)
 local notNormalTick = GetTime()
+local savedTick = GetTime()
 --回能
 local function calcTick(self, event, unit, type)
 	if (event == 'COMBAT_LOG_EVENT_UNFILTERED') then
 		local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
 		if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
 			notNormalTick = GetTime()
+			if GetTime() - LastTick < 0.02 then
+				LastTick = savedTick
+			end
 		end
 	elseif (unit == 'player' and type == 'ENERGY') then
-		lastPower = UnitPower('player', 3)
 		if UnitPower('player', 3) > lastPower and GetTime() - notNormalTick >= 0.02 then
+			if GetTime() - LastTick >= 0.02 then
+				savedTick = LastTick
+			end
 			LastTick = GetTime()
 		end
+		lastPower = UnitPower('player', 3)
 	end
 end
 
@@ -170,7 +177,7 @@ function wc.enoughEnergywithNextTickwithDelay(cost)
 		return true
 	end
 	local e = wc.getEnergy()
-	if nextTick - wc.getLatency() <= 0 then e = e + 20 end
+	if (nextTick - wc.getLatency() <= 0 or nextTick + wc.getLatency() >= 2) then e = e + 20 end
 	if e >= cost then return true end
 	if e + 20 >= cost and nextTick - wc.getLatency() <= 1.5 then return true end
 	return false
