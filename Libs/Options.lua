@@ -24,6 +24,7 @@ local function wcInit()
 	wcAlert = wcAlert or false
 	wcIsInInstance = wcIsInInstance or false
 	wcSpeed = wcSpeed or false
+	LastTick = LastTick or GetTime()
 	local title = select(2, GetAddOnInfo('whitepaws'))
 	SELECTED_CHAT_FRAME:AddMessage('---------------------')
 	SELECTED_CHAT_FRAME:AddMessage('欢迎使用'..title,255,255,0)
