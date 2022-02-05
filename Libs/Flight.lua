@@ -81,6 +81,16 @@ function wc.autoUnshiftonTaxi()
 	end
 end
 
+--月光林地德鲁伊免费飞行点自动下马
+local function moongladeAutoDismount()
+    if GossipFrameNpcNameText:GetText() == "希尔瓦·菲纳雯斯" or GossipFrameNpcNameText:GetText() == "布瑟恩·草风" then
+        Dismount()
+        SelectGossipOption(1)
+    end
+end
+
+GossipTitleButton1:SetScript("OnClick",moongladeAutoDismount)
+
 --解除德鲁伊变形
 function autoCancelShapeshiftForm()
     if InCombatLockdown() or NumTaxiNodes() == 0 then return end
