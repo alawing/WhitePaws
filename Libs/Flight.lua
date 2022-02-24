@@ -126,7 +126,7 @@ GossipTitleButton1:SetScript("OnClick",moongladeAutoDismount)
 
 --解除德鲁伊变形
 function autoCancelShapeshiftForm()
-    if InCombatLockdown() or NumTaxiNodes() == 0 then return end
+    if InCombatLockdown() then return end
 	local i = 1
 	Shapeshifted = false
 	while UnitBuff('player', i) do
@@ -137,7 +137,7 @@ function autoCancelShapeshiftForm()
     	end
 		i = i + 1
 	end
-
+    if NumTaxiNodes() == 0 then return end
     if Shapeshifted or GetShapeshiftFormID() then
         local num = NumTaxiNodes() or 17
         for i = 1, num, 1 do
