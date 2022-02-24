@@ -68,15 +68,18 @@ function wc.autoUnshiftonTaxi()
         	if not FlightPointButton then return end
         	if (Shapeshifted or GetShapeshiftFormID()) and MouseIsOver(FlightPointButton) then
             		TaxiNodeOnButtonEnter(FlightPointButton)
+			FlightPointButton:LockHighlight()
             		wc.autoUnshiftFrame:EnableMouse(true)
         	end
         	if (not Shapeshifted and not GetShapeshiftFormID()) or (not MouseIsOver(FlightPointButton)) then
             		wc.autoUnshiftFrame:EnableMouse(false)
+			FlightPointButton:UnlockHighlight()
         	end
     	end)
     	wc.autoUnshiftFrame:SetScript("OnLeave",function()
         	wc.autoUnshiftFrame:EnableMouse(false)
         	TaxiNodeOnButtonLeave(FlightPointButton)
+		FlightPointButton:UnlockHighlight()
     	end)
 	end
 end
