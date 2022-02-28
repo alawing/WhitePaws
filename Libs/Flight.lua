@@ -85,44 +85,52 @@ function wc.autoUnshiftonTaxi()
 end
 
 --月光林地德鲁伊免费飞行点自动下马
-local function moongladeAutoDismount()
-    	if GossipFrameNpcNameText:GetText() == "希尔瓦·菲纳雯斯" or GossipFrameNpcNameText:GetText() == "布瑟恩·草风" then
-        	Dismount()
-        	SelectGossipOption(1)
-	elseif GossipFrameNpcNameText:GetText() == "时间管理者" then
-		if not wc.GossipUnshiftFrame then
-		    wc.GossipUnshiftFrame = CreateFrame('Button', 'unshiftMacroButton2', UIParent, 'SecureActionButtonTemplate')
-		    wc.GossipUnshiftFrame:SetAttribute('type1', 'macro')
-		    wc.GossipUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoCancelShapeshift()\n/script SelectGossipOption(1)')
-		    wc.GossipUnshiftFrame:SetParent(GossipGreetingScrollChildFrame)
-		    wc.GossipUnshiftFrame:SetAllPoints(GossipGreetingScrollChildFrame)
-		    wc.GossipUnshiftFrame:SetSize(16,16)
-		    wc.GossipUnshiftFrame:SetPoint('TOPLEFT',0,0)
-		    wc.GossipUnshiftFrame:EnableMouse(false)
-		    wc.GossipUnshiftFrame:SetFrameLevel(6)
-		    wc.GossipUnshiftFrame:Show()
-		    wc.GossipUnshiftFrame:SetScript("OnUpdate",function(self,motion)
-			autoCancelShapeshiftForm()
-			if (Shapeshifted or GetShapeshiftFormID()) and MouseIsOver(GossipTitleButton1) then
-				GossipTitleButton1:LockHighlight()
-				wc.GossipUnshiftFrame:EnableMouse(true)
-			end
-			if (not Shapeshifted and not GetShapeshiftFormID()) or (not MouseIsOver(GossipTitleButton1)) then
-				wc.GossipUnshiftFrame:EnableMouse(false)
-				GossipTitleButton1:UnlockHighlight()
-			end
-		    end)
-		    wc.GossipUnshiftFrame:SetScript("OnLeave",function()
-			wc.GossipUnshiftFrame:EnableMouse(false)
-			GossipTitleButton1:UnlockHighlight()
-		    end)
-		end
-    	else
-        	GossipTitleButton_OnClick(self, button)
-    	end
+local function moongladeAutoDismount(self)
+    if GossipFrameNpcNameText:GetText() == "希尔瓦·菲纳雯斯" or GossipFrameNpcNameText:GetText() == "布瑟恩·草风" then
+        Dismount()
+        SelectGossipOption(1)
+    else
+        GossipTitleButton_OnClick(self, button)
+    end
 end
 
 GossipTitleButton1:SetScript("OnClick",moongladeAutoDismount)
+
+local function StewardOfTime()
+    if GossipFrameNpcNameText:GetText() == "时间管理者" then
+        if not wc.GossipUnshiftFrame then
+            wc.GossipUnshiftFrame = CreateFrame('Button', 'unshiftMacroButton2', UIParent, 'SecureActionButtonTemplate')
+            wc.GossipUnshiftFrame:SetAttribute('type1', 'macro')
+            wc.GossipUnshiftFrame:SetAttribute("macrotext1",'/cancelform\n/script autoCancelShapeshift()\n/script SelectGossipOption(1)')
+            wc.GossipUnshiftFrame:SetParent(GossipGreetingScrollChildFrame)
+            wc.GossipUnshiftFrame:SetAllPoints(GossipGreetingScrollChildFrame)
+            wc.GossipUnshiftFrame:SetSize(16,16)
+            wc.GossipUnshiftFrame:SetPoint('TOPLEFT',0,0)
+            wc.GossipUnshiftFrame:EnableMouse(false)
+            wc.GossipUnshiftFrame:SetFrameLevel(6)
+            wc.GossipUnshiftFrame:Show()
+            wc.GossipUnshiftFrame:SetScript("OnUpdate",function(self,motion)
+                autoCancelShapeshiftForm()
+                if (Shapeshifted or GetShapeshiftFormID()) and MouseIsOver(GossipTitleButton1) then
+                        GossipTitleButton1:LockHighlight()
+                        wc.GossipUnshiftFrame:EnableMouse(true)
+                end
+                if (not Shapeshifted and not GetShapeshiftFormID()) or (not MouseIsOver(GossipTitleButton1)) then
+                        wc.GossipUnshiftFrame:EnableMouse(false)
+                        GossipTitleButton1:UnlockHighlight()
+                end
+            end)
+            wc.GossipUnshiftFrame:SetScript("OnLeave",function()
+                wc.GossipUnshiftFrame:EnableMouse(false)
+                GossipTitleButton1:UnlockHighlight()
+            end)
+        end
+    end
+end
+
+local StewardOfTimeFrame = CreateFrame("frame")
+StewardOfTimeFrame:RegisterEvent("GOSSIP_SHOW")
+StewardOfTimeFrame:SetScript("OnEvent",StewardOfTime)
 
 --解除德鲁伊变形
 function autoCancelShapeshiftForm()
