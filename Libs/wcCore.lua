@@ -82,7 +82,7 @@ controlFrame:RegisterEvent('UNIT_AURA') -- the player current target recently ga
 controlFrame:SetScript('OnEvent', GetControls)
 
 function wc.getLatency()
-	return select(4, GetNetStats()) / 1000
+	return select(4, GetNetStats()) / 1000 + 0.02
 end
 
 --变形条件

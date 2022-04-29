@@ -2,8 +2,8 @@ local addonName, wc = ...
 
 --公共函数
 
---输出，自动解定身减速，考虑延迟
-function dps(cost, mana)
+--输出，自动解定身减速，考虑延迟，弃用
+function dps_old(cost, mana)
 	if not wc.strongControl and wc.enoughMana(mana) and (wc.needUnroot() or wc.ableShift() and not wc.enoughEnergywithNextTick(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
@@ -12,12 +12,17 @@ function dps(cost, mana)
 end
 
 --输出，自动解定身减速，考虑延迟和能量延迟
-function dpsp(cost, mana)
+function dps(cost, mana)
 	if not wc.strongControl and wc.enoughMana(mana) and (wc.needUnroot() or wc.ableShift() and not wc.enoughEnergywithNextTickwithDelay(cost)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
 	end
+end
+
+--dpsp加到默认dps，原先dps弃用
+function dpsp(cost, mana)
+	dps(cost, mana)
 end
 
 --输出，自动解定身减速，不考虑延迟
