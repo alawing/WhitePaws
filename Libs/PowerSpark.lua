@@ -25,13 +25,13 @@ frame:SetScript('OnEvent', function(self, event, ...)
 				local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
 				if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
 					notNormalTick = GetTime()
-					if GetTime() - self[key].timer < 0.02 then
+					if GetTime() - self[key].timer < 0.025 then
 						self[key].timer = self[key].last
 					end
 				end
 			elseif event == 'UNIT_POWER_FREQUENT' and unit == 'player' then -- 能量/法力更新
-				if cure > self[key].cure and GetTime() - notNormalTick >= 0.02 then
-					if GetTime() - self[key].timer >= 0.02 then
+				if cure > self[key].cure and GetTime() - notNormalTick >= 0.025 then
+					if GetTime() - self[key].timer >= 0.025 then
 						self[key].last = self[key].timer
 					end
 					self[key].timer = GetTime()
@@ -71,7 +71,7 @@ frame:SetScript('OnEvent', function(self, event, ...)
 			power:HookScript('OnUpdate', function(self)
 				local now = GetTime()
 				if now < self.rate then return end
-				self.rate = now + 0.02 --刷新率
+				self.rate = now + 0.025 --刷新率
 				if self.hide(self.key) then
 					self.spark:SetAlpha(0)
 				elseif self.wait and self.wait > now and (UnitPowerType('player') == 0 or self.key == 'druid') then --5秒等待回蓝
