@@ -137,13 +137,13 @@ local function calcTick(self, event, unit, type)
 		local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
 		if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
 			notNormalTick = GetTime()
-			if GetTime() - LastTick < 0.025 then
+			if GetTime() - LastTick < 0.02 then
 				LastTick = savedTick
 			end
 		end
 	elseif (unit == 'player' and type == 'ENERGY') then
-		if UnitPower('player', 3) > lastPower and GetTime() - notNormalTick >= 0.025 then
-			if GetTime() - LastTick >= 0.025 then
+		if UnitPower('player', 3) > lastPower and GetTime() - notNormalTick >= 0.02 then
+			if GetTime() - LastTick >= 0.02 then
 				savedTick = LastTick
 			end
 			LastTick = GetTime()
