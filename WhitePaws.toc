@@ -1,4 +1,4 @@
-## Interface: 20505
+## Interface: 20504
 ## Title: 白爪助手@project-version@
 ## Version: @project-version@
 ## Author: NGA:alawing (失眠者白爪-辛迪加) NGA:cksky
