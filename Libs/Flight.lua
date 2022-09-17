@@ -15,19 +15,10 @@ local function changeBoostTrinket(self, event, ...)
     	end
 	if (not IsInInstance() or wcIsInInstance) and IsMounted() and not UnitOnTaxi('player') then
 		if GetInventoryItemID('player', 13) ~= mountedTrinket and GetInventoryItemID('player', 14) ~= mountedTrinket then
-        	if GetInventoryItemID('player', 14) ~= 32481 then
-				originTrinket = GetInventoryItemID('player', 14)
-			end
+            originTrinket = GetInventoryItemID('player', 14)
 			EquipItemByName(mountedTrinket, 14)
 		end
-	elseif (not IsInInstance() or wcIsInInstance) and (GetShapeshiftFormID() == 27 or GetShapeshiftFormID() == 29) then
-		if GetInventoryItemID('player', 13) ~= 32481 and GetInventoryItemID('player', 14) ~= 32481 then
-        	if GetInventoryItemID('player', 14) ~= mountedTrinket then
-				originTrinket = GetInventoryItemID('player', 14)
-			end
-			EquipItemByName(32481, 14)
-		end
-	elseif GetInventoryItemID('player', 14) == mountedTrinket or GetInventoryItemID('player' ,14) == 32481 then
+	elseif GetInventoryItemID('player', 14) == mountedTrinket then
         if originTrinket ~= nil then
 			EquipItemByName(originTrinket, 14)
 		end
