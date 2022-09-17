@@ -3,94 +3,45 @@
 以下是自己用的宏，可以抄过来直接用
 
 **
-猫输出宏和个别熊输出宏需要提前准备好一个 能量转化器，黑色骨灰或者任意次级精华正好1个，把/施放 次级位面精华 换成自己的道具
+猫输出宏和个别熊输出宏需要提前准备好一个[夜色虫]，钓鱼商人有卖25铜一个
 如果没学海豹形态，猫技能里的form:3都改成2
 **
 
 【猫】:
-为了极大提升dps，建议人形态和猫形态在同一个键位都放相同的输出宏
-自动吃蓝只在猫德掉3000蓝才会自动使用，
+WLK新增 变形金刚-来回变形状
+例子，可以在选择能量范围自动切换形态：
+猫形态所有技能
+#showtooltip 猫技能
+/wc bxjgx 27
+/施放 夜色虫
+/施放 [noform]巨熊形态;猫技能
+/wc end
 
-输出系列:
-想自动吃蓝就在下边的猫输出宏里第二行开始添加这几行
-/脚本 manapot(技能耗能量,'你有的药水名字')
-/施放 [form:3]你有的药水名字
-放在下面这行命令前面
-/脚本 dps(技能耗能量)
+熊形态所有技能
+#showtooltip 熊技能
+/wc bxjgx 65
+/施放 夜色虫
+(此间可添加激怒等无cd技能或道具)
+/施放 [noform]巨熊形态;熊技能
+(可以添加/施放 重殴)
+/wc end
 
-#showtooltip [stealth]突袭;裂伤（豹）
-/脚本 dps(40) ##有4T6改成35
-/施放 次级位面精华
-/施放 [nostealth]嗜血胸针
-/施放 [stealth]突袭;[form:3]裂伤（豹）;!猎豹形态
-/脚本 wcEnd()
-/startattack [nostealth]
-
-#showtooltip [stealth]毁灭;撕碎
-/脚本 dps(42)
-/施放 次级位面精华
-/施放 [nostealth]嗜血胸针
-/施放 [stealth]毁灭;[form:3]撕碎;!猎豹形态
-/脚本 wcEnd()
-/startattack [nostealth]
-
-#showtooltip 割裂
-/脚本 dps(30)
-/施放 次级位面精华
-/施放 [nostealth]嗜血胸针
-/施放 [form:3]割裂;!猎豹形态
-/脚本 wcEnd()
-/startattack [nostealth]
-
-#showtooltip 凶猛撕咬
-/脚本 dps(35)
-/施放 次级位面精华
-/施放 [nostealth]嗜血胸针
-/施放 [form:3]凶猛撕咬;!猎豹形态
-/脚本 wcEnd()
-/startattack [nostealth]
-
-#showtooltip 割碎
-/脚本 dps(35)
-/施放 次级位面精华
-/施放 [form:3]割碎;!猎豹形态
-/脚本 wcEnd()
-/stopattack [form:3]
-
-#showtooltip 畏缩
-/脚本 dps(20)
-/施放 次级位面精华
-/施放 [form:3]畏缩;!猎豹形态
-/脚本 wcEnd()
+/wc bxjgx 27: 猫形态不够27能量就变熊
+/wc bxjgm 65: 熊形态65猫的能量就变猫
 
 单纯重新变身:
 #showtooltip
 /脚本 shift()
 /施放 [nostealth]!猎豹形态
-/脚本 wcEnd()
-
-1键高能量潜行:
-#showtooltip 潜行
-/脚本 shift(nil,40,nil)
-/施放 !猎豹形态
-/施放 潜行
-/脚本 wcEnd()
+/wc end
 
 【熊】:
-吃药
-#showtooltip
-/脚本 hppot()
-/use 超级治疗药水
-/use 极效治疗石
-/施放 !巨熊形态
-/脚本 wcEnd()
-
 熊输出宏，自动解定身,其他技能可以把技能名字改 割伤 横扫 精灵之火（野性） 挫志咆哮
 #showtooltip 裂伤（熊）
 /脚本 shift(0)
-/施放 次级位面精华
+/施放 夜色虫
 /施放 [form:1]裂伤（熊）;!巨熊形态
-/脚本 wcEnd()
+/wc end
 /startattack
 
 重殴因为没gcd是这样
@@ -98,7 +49,7 @@
 /脚本 shift(0)
 /施放 !巨熊形态
 /施放 [form:1]重殴
-/脚本 wcEnd()
+/wc end
 /startattack
 
 如果输出宏想没怒气时骗怒气,第二行改为，意思是怒气不够10就变
@@ -108,51 +59,34 @@
 例如，下面脚本（加过变形天赋后，留1个变身加一个战复的蓝）
 #showtooltip 裂伤（熊）
 /脚本 shift(10,nil,2200)
-/施放 次级位面精华
+/施放 夜色虫
 /施放 [form:1]裂伤（熊）;!巨熊形态
-/脚本 wcEnd()
+/wc end
 /startattack
 
-能量够冲锋不够变身再冲锋
+怒气够冲锋不够变身再冲锋
 #showtooltip 野性冲锋
 /脚本 shift(5)
 /施放 !巨熊形态
 /施放 野性冲锋
-/脚本 wcEnd()
-
-点一下激怒，再点一下取消，怒气大于10直接激怒，小于10变身再激怒
-#showtooltip 激怒
-/cancelaura 激怒
-/脚本 shift(10,nil,1500)
-/施放 !巨熊形态
-/施放 激怒
-/脚本 wcEnd()
+/wc end
 
 单纯重新变身
 #showtooltip
 /脚本 shift()
 /施放 !巨熊形态
-/脚本 wcEnd()
+/wc end
 
 旅行:
 #showtooltip
 /脚本 if GetSpellCooldown(783)>0 then SetCVar('autoUnshift',0) end
 /施放 [swimming,combat]!水栖形态;[swimming]水栖形态;[flyable,nocombat]飞行形态;[combat]!旅行形态;旅行形态
-/脚本 wcEnd()
+/wc end
 
 附录:
-函数说明,请选用适合你的输出函数:
-dps(能量消耗): 猫德判断输出，自动打不到就解定身减速，考虑延迟和能量延迟，一键打法师
-dpsx(能量消耗): 猫德判断输出，自动打不到就解定身减速，不考虑延迟，一键打法师
-dpsl(能量消耗): 猫德判断输出，自动打不到就解定身减速，考虑延迟，省蓝，一键打法师
-
-猫德dps系列额外参数，可以设置留蓝，否则够蓝变身就变
-例如: dps(能量消耗,留蓝)
 
 shift(r, e, m): 判断通用变身，r是最少怒气，e是最少能量，m是最少蓝量,
                 r e m 默认是200, 200, 变一次身的耗蓝,默认情况就是可以直接变身（被晕不会）
                 如果不设置就写nil和200一个意思，被定身的话在最少蓝量前会自动解
-manapot(技能耗能量,'你有的药水名字'): 猫德自动在消耗3000蓝以上时吃蓝
-manapotx(技能耗能量,'你有的药水名字'): 猫德自动在消耗3000蓝以上时不考虑延迟的吃蓝
-hppot(): 吃药判断，gcd，没蓝或者被强控不会变人(不判断药水cd)
-wcEnd(): 宏结尾时请写上复位变身设置
+
+/wc end: 宏结尾时请写上复位变身设置

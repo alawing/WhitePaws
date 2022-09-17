@@ -106,13 +106,11 @@ function wc.getRage()
 end
 
 function wc.getEnergy()
-	if GetShapeshiftFormID() ~= 1 then
-		return 0
-	end
 	return UnitPower('player', 3)
 end
 
 --格鲁尔石化33652 玛瑟里顿碎片36449 瓦斯琪纠缠38316
+--眩晕？ 15571 1604
 function wc.getDebuff(...)
 	local debuffs = {}, i, v
 	for i, v in ipairs{...} do
@@ -128,35 +126,6 @@ function wc.getDebuff(...)
 	return false
 end
 
-local lastPower = UnitPower('player', 3)
-local notNormalTick = GetTime()
-local savedTick = GetTime()
---回能
-local function calcTick(self, event, unit, type)
-	if (event == 'COMBAT_LOG_EVENT_UNFILTERED') then
-		local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
-		if subevent == 'SPELL_ENERGIZE' and sourceName ==  GetUnitName('player') then
-			notNormalTick = GetTime()
-			if GetTime() - LastTick < 0.02 then
-				LastTick = savedTick
-			end
-		end
-	elseif (unit == 'player' and type == 'ENERGY') then
-		if UnitPower('player', 3) > lastPower and GetTime() - notNormalTick >= 0.02 then
-			if GetTime() - LastTick >= 0.02 then
-				savedTick = LastTick
-			end
-			LastTick = GetTime()
-		end
-		lastPower = UnitPower('player', 3)
-	end
-end
-
-tickframe = CreateFrame("Frame", nil)
-tickframe:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
-tickframe:RegisterEvent('UNIT_POWER_FREQUENT')
-tickframe:SetScript('OnEvent', calcTick)
-
 function wc.enoughMana(cost)
 	if cost == nil then
 		cost = GetSpellPowerCost(768)[1].cost
@@ -171,26 +140,6 @@ function wc.enoughEnergy(cost)
 	return wc.getEnergy() >= cost
 end
 
-function wc.enoughEnergywithNextTickwithDelay(cost)
-	local nextTick = 2 - mod(GetTime() - LastTick, 2)
-	if wc.clearcasting then
-		return true
-	end
-	local e = wc.getEnergy()
-	if (nextTick - wc.getLatency() <= 0 or nextTick + wc.getLatency() >= 2) then e = e + 20 end
-	if e >= cost then return true end
-	if e + 20 >= cost and nextTick - wc.getLatency() <= 1.5 then return true end
-	return false
-end
-
-function wc.enoughEnergywithNextTick(cost)
-	local nextTick = 2 - mod(GetTime() - LastTick, 2)
-	if wc.enoughEnergy(cost) then return true end
-	local e = wc.getEnergy()
-	if e + 20 >= cost and nextTick <= 1.5 then return true end
-	return false
-end
-
 function wc.needUnroot()
 	--打得着并且不是瓦斯琪纠缠
 	if IsSpellInRange('爪击', 'target') == 1 and not wc.getDebuff(38316) then
@@ -199,4 +148,5 @@ function wc.needUnroot()
 	elseif wc.rooted then return true
 	elseif select(2, GetUnitSpeed('player')) < 7 and not IsStealthed() then return true
 	else return false end
+	--todo dazed 眩晕 震荡射击
 end

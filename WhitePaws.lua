@@ -2,41 +2,9 @@ local addonName, wc = ...
 
 --公共函数
 
---输出，自动解定身减速，考虑延迟，弃用
-function dps_old(cost, mana)
-	if not wc.strongControl and wc.enoughMana(mana) and (wc.needUnroot() or wc.ableShift() and not wc.enoughEnergywithNextTick(cost)) then
-		SetCVar('autoUnshift', 1)
-	else
-		SetCVar('autoUnshift', 0)
-	end
-end
-
---输出，自动解定身减速，考虑延迟和能量延迟
+--输出，自动解定身减速，考虑延迟和能量延迟，tbc有用，wlk弃用
 function dps(cost, mana)
 	if not wc.strongControl and wc.enoughMana(mana) and (wc.needUnroot() or wc.ableShift() and not wc.enoughEnergywithNextTickwithDelay(cost)) then
-		SetCVar('autoUnshift', 1)
-	else
-		SetCVar('autoUnshift', 0)
-	end
-end
-
---dpsp加到默认dps，原先dps弃用
-function dpsp(cost, mana)
-	dps(cost, mana)
-end
-
---输出，自动解定身减速，不考虑延迟
-function dpsx(cost, mana)
-	if not wc.strongControl and wc.enoughMana(mana) and (wc.needUnroot() or not wc.getShiftGCD() and not wc.enoughEnergywithNextTick(cost)) then
-		SetCVar('autoUnshift', 1)
-	else
-		SetCVar('autoUnshift', 0)
-	end
-end
-
---输出，自动解定身减速，考虑延迟，省蓝
-function dpsl(cost, mana)
-	if not wc.strongControl and wc.enoughMana(mana) and (wc.needUnroot() or wc.ableShift() and not wc.enoughEnergy(cost-20)) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -54,26 +22,7 @@ function shift(r, e, m)
 	end
 end
 
---吃蓝，考虑延迟
-function manapot(cost, name)
-	if not wc.ableShift() or wc.enoughEnergywithNextTick(cost) or wc.strongControl or (UnitPowerMax('player', 0) - UnitPower('player', 0)) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
-		SetCVar('autoUnshift', 0)
-	else
-		SELECTED_CHAT_FRAME:AddMessage('吃蓝啦！')
-		SetCVar('autoUnshift', 1)
-	end
-end
-
---老款吃蓝，不考虑延迟
-function manapotx(cost, name)
-	if wc.getShiftGCD() or wc.enoughEnergywithNextTick(cost) or wc.strongControl or (UnitPowerMax('player', 0) - UnitPower('player', 0)) < 3000 or GetItemCooldown(GetItemInfoInstant(name)) > 0 or GetItemCount(name) == 0 then
-		SetCVar('autoUnshift', 0)
-	else
-		SetCVar('autoUnshift', 1)
-	end
-end
-
---吃红
+--吃红，tbc有用，wlk弃用
 --9634巨熊形态
 function hppot()
 	local u,n = IsUsableSpell(9634)
@@ -84,8 +33,35 @@ function hppot()
 	end
 end
 
+--变形金刚-变熊
+function bxjgx(e)
+	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and wc.getEnergy() < e then
+		SetCVar('autoUnshift', 1)
+	else
+		SetCVar('autoUnshift', 0)
+	end
+end
+
+--变形金刚-变猫
+function bxjgm(e)
+	if not wc.strongControl and wc.enoughMana() and wc.getEnergy() >= e then
+		if not wc.getShiftGCD() then
+			SetCVar('autoUnshift', 1)
+		else
+			cancelQueue = 1
+			SetCVar('autoUnshift', 0)
+		end
+	else
+		SetCVar('autoUnshift', 0)
+	end
+end
+
 --结束
 function wcEnd()
+	if cancelQueue == 1 then
+		SpellCancelQueuedSpell()
+		cancelQueue = 0
+	end
 	SetCVar('autoUnshift', 1)
 	UIErrorsFrame:Clear()
 end
