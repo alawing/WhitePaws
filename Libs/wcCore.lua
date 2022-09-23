@@ -109,8 +109,22 @@ function wc.getEnergy()
 	return UnitPower('player', 3)
 end
 
---格鲁尔石化33652 玛瑟里顿碎片36449 瓦斯琪纠缠38316
---眩晕？ 15571 1604
+--狂暴50334 激怒5229 猛虎9846 50212 50213
+function wc.getBuff(...)
+	local buffs = {}, i, v
+	for i, v in ipairs{...} do
+		buffs[v] = true;
+	end
+	i = 1
+	while UnitBuff('player', i) do
+		if buffs[select(1, UnitBuff('player', i))] or buffs[select(10, UnitBuff('player', i))] then
+			return true
+		end
+		i = i + 1
+	end
+	return false
+end
+
 function wc.getDebuff(...)
 	local debuffs = {}, i, v
 	for i, v in ipairs{...} do

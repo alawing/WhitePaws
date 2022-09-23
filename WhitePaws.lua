@@ -35,7 +35,7 @@ end
 
 --变形金刚-变熊
 function bxjgx(e)
-	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and wc.getEnergy() < e then
+	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and wc.getEnergy() < e and not wc.getBuff(50334, 9846, 50212, 50213) then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -44,7 +44,7 @@ end
 
 --变形金刚-变猫
 function bxjgm(e)
-	if not wc.strongControl and wc.enoughMana() and wc.getEnergy() >= e then
+	if not wc.strongControl and wc.enoughMana() and wc.getEnergy() >= e and not wc.getBuff(50334) then
 		if not wc.getShiftGCD() then
 			SetCVar('autoUnshift', 1)
 		else

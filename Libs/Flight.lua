@@ -4,6 +4,7 @@ local addonName, wc = ...
 --上坐骑或飞行自动换饰品
 --马鞭: 25653 迅捷飞行符咒: 32481 碎天者之鞭: 32863 棍子上的胡萝卜: 37312
 local function changeBoostTrinket(self, event, ...)
+    if UnitLevel("player") > 70 then return end
 	if InCombatLockdown() then return end
 	local mountedTrinket = nil
     	if GetItemCount(32863) > 0 then
