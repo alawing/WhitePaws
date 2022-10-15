@@ -148,7 +148,7 @@ function wc.enoughMana(cost)
 end
 
 function wc.enoughEnergy(cost)
-	if wc.clearcasting then
+	if wc.getBuff(16870) then
 		return true
 	end
 	return wc.getEnergy() >= cost
