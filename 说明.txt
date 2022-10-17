@@ -1,9 +1,8 @@
 先把目录文件放到Interface/Add Ons/里，确保目录名叫WhitePaws，游戏中插件选择上白爪助手,就可以用下面的宏了
 
 **
-猫输出宏和个别熊输出宏需要提前准备好一个低级属性卷轴比如[精神卷轴 II]
-在用宏之前，保持身上有更高属性的buff
-（团队buff比如牧师的精神或者同属性高属性卷轴比如[精神卷轴 VIII])
+猫输出宏和个别熊输出宏需要提前准备好一个任意等级[保护卷轴]
+在用宏之前，保持身上有爪子buff
 如果没学海豹形态，猫技能里的form:3都改成2
 **
 
@@ -16,7 +15,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 猫形态所有技能
 #showtooltip 猫技能
 /wc bxjgx 27
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 /施放 [noform]巨熊形态;猫技能
 /wc end
 /startattack [nostealth,harm,nodead]
@@ -24,7 +23,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 例子
 #showtooltip [stealth]毁灭;撕碎
 /wc bxjgx 27
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 /施放 [noform]巨熊形态;[stealth]毁灭;撕碎
 /wc end
 /startattack [nostealth,harm,nodead]
@@ -32,7 +31,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 熊形态所有技能
 #showtooltip 熊技能
 /wc bxjgm 65
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 (此间可添加激怒等无cd技能或道具)
 /施放 [noform]猎豹形态;熊技能
 (可以添加/施放 重殴)
@@ -47,7 +46,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 如果熊形态技能是固定顺序，也可以写成这样
 #showtooltip 熊技能
 /wc bxjgm 65
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 (此间可添加激怒等无cd技能或道具)
 /施放 [noform]猎豹形态
 /castsequence [form:1]reset=（自己定义条件）熊技能1,熊技能2....
@@ -63,7 +62,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 例子
 #showtooltip 横扫（熊）
 /wc bxjgm 65
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 /施放 激怒
 /施放 [noform]猎豹形态;横扫（熊）
 /eq [form:3]荒野神像
@@ -87,7 +86,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 可以自动解定身和减速
 #showtooltip 猫技能
 /脚本 shift(0)
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 /施放 [noform]猎豹形态;猫技能
 /wc
 /startattack [nostealth,harm,nodead]
@@ -110,7 +109,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 熊输出宏，自动解定身,其他技能可以把技能名字改 割伤 横扫 精灵之火（野性） 挫志咆哮
 #showtooltip 裂伤（熊）
 /脚本 shift(0)
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 /施放 [form:1]裂伤（熊）;!巨熊形态
 /wc end
 /startattack
@@ -130,7 +129,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 例如，下面脚本（加过变形天赋后，留1个变身加一个战复的蓝）
 #showtooltip 裂伤（熊）
 /脚本 shift(10,nil,2200)
-/施放 精神卷轴 II
+/施放 保护卷轴 VII
 /施放 [form:1]裂伤（熊）;!巨熊形态
 /wc end
 /startattack
@@ -168,7 +167,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 /startattack
 /施放 [noform:3,worn:匕首]猎豹形态
 /wc bxjgx 30
-/施放 [form:3,worn:法杖]精神卷轴 II
+/施放 [form:3,worn:法杖]保护卷轴 VII
 /施放 [form:0,@player,noform,worn:法杖]野性赐福
 /eq [noform,noworn:匕首]一个匕首;[form:3,noworn:法杖]一个法杖
 /施放 [form:3]横扫（豹）
