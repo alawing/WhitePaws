@@ -1,27 +1,38 @@
 先把目录文件放到Interface/Add Ons/里，确保目录名叫WhitePaws，游戏中插件选择上白爪助手,就可以用下面的宏了
 
-以下是自己用的宏，可以抄过来直接用
-
 **
-猫输出宏和个别熊输出宏需要提前准备好一个[闪光的小珠]，钓鱼商人有卖50铜一个。如果钓鱼技能50以上可以买[夜色虫]，唯一的好处就是字数少宏可以写更多内容
+猫输出宏和个别熊输出宏需要提前准备好一个低级属性卷轴比如[精神卷轴 II]
+在用宏之前，保持身上有更高属性的buff
+（团队buff比如牧师的精神或者同属性高属性卷轴比如[精神卷轴 VIII])
 如果没学海豹形态，猫技能里的form:3都改成2
 **
 
 【猫】:
-WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切换猫/熊形态。猛虎，狂暴时不会变
-例子，可以在选择能量范围自动切换形态：
+WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切换猫/熊形态。
+狂暴时，猛虎不在cd时不会变
+熊形态被定身或者有清晰预兆时自动回猫
+
+用法，可以在选择能量范围自动切换形态：
 猫形态所有技能
 #showtooltip 猫技能
 /wc bxjgx 27
-/施放 闪光的小珠
+/施放 精神卷轴 II
 /施放 [noform]巨熊形态;猫技能
+/wc end
+/startattack [nostealth,harm,nodead]
+
+例子
+#showtooltip [stealth]毁灭;撕碎
+/wc bxjgx 27
+/施放 精神卷轴 II
+/施放 [noform]巨熊形态;[stealth]毁灭;撕碎
 /wc end
 /startattack [nostealth,harm,nodead]
 
 熊形态所有技能
 #showtooltip 熊技能
 /wc bxjgm 65
-/施放 闪光的小珠
+/施放 精神卷轴 II
 (此间可添加激怒等无cd技能或道具)
 /施放 [noform]猎豹形态;熊技能
 (可以添加/施放 重殴)
@@ -36,7 +47,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 如果熊形态技能是固定顺序，也可以写成这样
 #showtooltip 熊技能
 /wc bxjgm 65
-/施放 闪光的小珠
+/施放 精神卷轴 II
 (此间可添加激怒等无cd技能或道具)
 /施放 [noform]猎豹形态
 /castsequence [form:1]reset=（自己定义条件）熊技能1,熊技能2....
@@ -49,20 +60,57 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 /wc end
 /startattack [harm,nodead]
 
+例子
+#showtooltip 横扫（熊）
+/wc bxjgm 65
+/施放 精神卷轴 II
+/施放 激怒
+/施放 [noform]猎豹形态;横扫（熊）
+/eq [form:3]荒野神像
+/eq [form:3]乌鸦之神的雕像
+/wc end
+
 /wc bxjgx 27: 猫形态不够27能量就变熊
 /wc bxjgm 65: 熊形态65猫的能量就变猫
+
+在实际运用时
+同键位，猫形态所有技能都用上这些
+同键位，熊形态所有技能都用上这些
+人形态，同键位建议都换成变成猫
+就可以实现，正常输出时，可以自动切换成最合适的形态
+
+例子 如果猫和熊同键位都是各形态横扫
+那么一直按同一个按键就可以自动切形态扫到底
+
+如果不用变形金刚的话
+猫和熊技能建议改成如下
+可以自动解定身和减速
+#showtooltip 猫技能
+/脚本 shift(0)
+/施放 精神卷轴 II
+/施放 [noform]猎豹形态;猫技能
+/wc
+/startattack [nostealth,harm,nodead]
+
 
 单纯重新变身:
 #showtooltip
 /脚本 shift()
-/施放 [nostealth]!猎豹形态
+/施放 [nostealth]!猎豹形态（或者巨熊形态）
+/wc end
+
+全形态冲锋，熊怒气不够5，自动刷一下变身再冲
+#showtooltip [noform:3]野性冲锋 - 熊;野性冲锋 - 豹
+/脚本 shift(5)
+/施放 [noform:3]!巨熊形态
+/施放 [form:1]野性冲锋 - 熊;野性冲锋 - 豹
 /wc end
 
 【熊】:
 熊输出宏，自动解定身,其他技能可以把技能名字改 割伤 横扫 精灵之火（野性） 挫志咆哮
 #showtooltip 裂伤（熊）
 /脚本 shift(0)
-/施放 闪光的小珠
+/施放 精神卷轴 II
 /施放 [form:1]裂伤（熊）;!巨熊形态
 /wc end
 /startattack
@@ -82,7 +130,7 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 例如，下面脚本（加过变形天赋后，留1个变身加一个战复的蓝）
 #showtooltip 裂伤（熊）
 /脚本 shift(10,nil,2200)
-/施放 闪光的小珠
+/施放 精神卷轴 II
 /施放 [form:1]裂伤（熊）;!巨熊形态
 /wc end
 /startattack
@@ -94,6 +142,14 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 /施放 野性冲锋（熊）
 /wc end
 
+激怒，怒气不够10多刷10怒气，再点一下取消激怒
+#showtooltip 激怒
+/cancelaura 激怒
+/脚本 shift(10,nil,1500)
+/施放 !巨熊形态
+/施放 激怒
+/脚本 wcEnd()
+
 单纯重新变身
 #showtooltip
 /脚本 shift()
@@ -102,8 +158,20 @@ WLK新增 变形金刚-来回变形状：在能量范围内打技能时自动切
 
 旅行:
 #showtooltip
-/脚本 if GetSpellCooldown(783)>0 then SetCVar('autoUnshift',0) end
-/施放 [swimming,combat]!水栖形态;[swimming]水栖形态;[flyable,nocombat]飞行形态;[combat]!旅行形态;旅行形态
+/脚本 if GetSpellCooldown(783)>0 then SetCVar("autoUnshift",0) end
+/施放 [swimming,combat]!水栖形态;[swimming]水栖形态;[outdoors,flyable,nocombat]迅捷飞行形态;[combat,outdoors]!旅行形态;[outdoors]旅行形态; !猎豹形态
+/脚本 wcEnd()
+
+
+测试中：猎豹形态没能量自动刷爪子
+#showtooltip
+/startattack
+/施放 [noform:3,worn:匕首]猎豹形态
+/wc bxjgx 30
+/施放 [form:3,worn:法杖]精神卷轴 II
+/施放 [form:0,@player,noform,worn:法杖]野性赐福
+/eq [noform,noworn:匕首]一个匕首;[form:3,noworn:法杖]一个法杖
+/施放 [form:3]横扫（豹）
 /wc end
 
 附录:
