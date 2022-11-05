@@ -42,6 +42,17 @@ function bxjgx(e)
 	end
 end
 
+--变形金刚-激怒变熊
+-- 50213 猛虎之怒
+-- 5229 激怒
+function jnbxjgx(e)
+	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and not wc.enoughEnergy(e) and not wc.getBuff(50334) and GetSpellCooldown(50213) ~= 0 and GetSpellCooldown(5229) == 0 then
+		SetCVar('autoUnshift', 1)
+	else
+		SetCVar('autoUnshift', 0)
+	end
+end
+
 --变形金刚-变猫
 function bxjgm(e)
 	if not wc.strongControl and wc.enoughMana() and (wc.needUnroot() or (wc.enoughEnergy(e) and not wc.getBuff(50334))) then
