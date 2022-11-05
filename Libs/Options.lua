@@ -23,6 +23,8 @@ local function WhitePaws_Command(arg)
 		pcall(wcEnd)
 	elseif arg1 == 'bxjgx' then
 		pcall(bxjgx, tonumber(arg2))
+	elseif arg1 == 'jnbxjgx' then
+		pcall(jnbxjgx, tonumber(arg2))
 	elseif arg1 == 'bxjgm' then
 		pcall(bxjgm, tonumber(arg2))
 	else
