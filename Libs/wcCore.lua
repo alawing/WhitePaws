@@ -125,6 +125,23 @@ function wc.getBuff(...)
 	return false
 end
 
+--狂暴50334 激怒5229 猛虎9846 50212 50213
+function wc.getBuffTime(...)
+	local buffs = {}, i, v
+	for i, v in ipairs{...} do
+		buffs[v] = true;
+	end
+	i = 1
+	while UnitBuff('player', i) do
+		if buffs[select(1, UnitBuff('player', i))] or buffs[select(10, UnitBuff('player', i))] then
+			local _, _, _, _, _, duration, expirationTime = UnitBuff("player", i)
+     		return expirationTime - GetTime()
+		end
+		i = i + 1
+	end
+	return 0
+end
+
 function wc.getDebuff(...)
 	local debuffs = {}, i, v
 	for i, v in ipairs{...} do
@@ -163,4 +180,8 @@ function wc.needUnroot()
 	elseif select(2, GetUnitSpeed('player')) < 7 and not IsStealthed() then return true
 	else return false end
 	--todo dazed 眩晕 震荡射击
+end
+
+function wc.getComboPoint()
+	return GetComboPoints('player','target')
 end
