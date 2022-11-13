@@ -164,8 +164,11 @@ function wc.enoughMana(cost)
 	return UnitPower('player', 0) >= cost
 end
 
+-- 清洗预兆 16870
+-- 猛虎 50213
+
 function wc.enoughEnergy(cost)
-	if wc.getBuff(16870) then
+	if wc.getBuff(16870) or GetSpellCooldown(50213) == 0 then
 		return true
 	end
 	return wc.getEnergy() >= cost
