@@ -168,7 +168,7 @@ end
 -- 猛虎 50213
 
 function wc.enoughEnergy(cost)
-	if wc.getBuff(16870) or GetSpellCooldown(50213) < 2 then
+	if wc.getBuff(16870) or wc.getCoolDown(50213) < 2 then
 		return true
 	end
 	return wc.getEnergy() >= cost
@@ -187,4 +187,12 @@ end
 
 function wc.getComboPoint()
 	return GetComboPoints('player','target')
+end
+
+function wc.getCoolDown(spellID)
+	local cooldown, duration = GetSpellCooldown(spellID)
+	if cooldown == 0 then
+		return cooldown
+	end
+	return cooldown + duration - GetTime()
 end
