@@ -35,7 +35,7 @@ end
 
 --变形金刚-变熊
 function bxjgx(e)
-	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and not wc.enoughEnergy(e) and not wc.getBuff(50334) and wc.getBuffTime(52610) > 5 and GetSpellCooldown(50213) ~= 0 and wc.getComboPoint() < 4 then
+	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and not wc.enoughEnergy(e) and not wc.getBuff(50334) and wc.getBuffTime(52610) > 5 and wc.getComboPoint() < 4 then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -46,8 +46,9 @@ end
 -- 52610 野蛮咆哮
 -- 50213 猛虎之怒
 -- 5229 激怒
+-- 50334 狂暴
 function jnbxjgx(e)
-	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and not wc.enoughEnergy(e) and not wc.getBuff(50334) and GetSpellCooldown(50213) ~= 0 and GetSpellCooldown(5229) == 0 then
+	if not wc.strongControl and wc.enoughMana() and not wc.getShiftGCD() and not wc.enoughEnergy(e) and not wc.getBuff(50334) and GetSpellCooldown(5229) == 0 then
 		SetCVar('autoUnshift', 1)
 	else
 		SetCVar('autoUnshift', 0)
@@ -56,7 +57,7 @@ end
 
 --变形金刚-变猫
 function bxjgm(e)
-	if not wc.strongControl and wc.enoughMana() and (wc.needUnroot() or (wc.enoughEnergy(e) and wc.getRage() < 20) or GetSpellCooldown(50213) == 0) then
+	if not wc.strongControl and wc.enoughMana() and (wc.needUnroot() or (wc.enoughEnergy(e) and wc.getRage() < 20)) then
 		if not wc.getShiftGCD() then
 			SetCVar('autoUnshift', 1)
 		else
