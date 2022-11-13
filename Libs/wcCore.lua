@@ -134,7 +134,7 @@ function wc.getBuffTime(...)
 	i = 1
 	while UnitBuff('player', i) do
 		if buffs[select(1, UnitBuff('player', i))] or buffs[select(10, UnitBuff('player', i))] then
-			local _, _, _, _, _, duration, expirationTime = UnitBuff("player", i)
+			local _, _, _, _, duration, expirationTime = UnitBuff("player", i)
      		return expirationTime - GetTime()
 		end
 		i = i + 1
@@ -168,7 +168,7 @@ end
 -- 猛虎 50213
 
 function wc.enoughEnergy(cost)
-	if wc.getBuff(16870) or GetSpellCooldown(50213) == 0 then
+	if wc.getBuff(16870) or GetSpellCooldown(50213) < 2 then
 		return true
 	end
 	return wc.getEnergy() >= cost
