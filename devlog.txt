@@ -40,3 +40,15 @@ C_LossOfControl.GetActiveLossOfControlDataByUnit
 					ChatFrame3:AddMessage('----------------------')
 
 /dump GetItemStats('达图尔的变形魔棒')
+
+/run print(select(6, UnitBuff("player", 2))[0])
+
+/run print(UnitBuff("player", 2))
+
+/run print(GetSpellCooldown(50213))
+
+/run SELECTED_CHAT_FRAME:AddMessage(GetTime())
+
+/run local _, _, _, _, duration, expirationTime = UnitBuff("player", 6);SELECTED_CHAT_FRAME:AddMessage(expirationTime - GetTime())
+
+/run local cooldown,duration = GetSpellCooldown(50213);print(cooldown + duration - GetTime())
