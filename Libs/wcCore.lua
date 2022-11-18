@@ -164,7 +164,7 @@ function wc.enoughMana(cost)
 	return UnitPower('player', 0) >= cost
 end
 
--- 清洗预兆 16870
+-- 清晰预兆 16870
 -- 猛虎 50213
 
 function wc.enoughEnergy(cost)
