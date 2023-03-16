@@ -125,6 +125,23 @@ function wc.getBuff(...)
 	return false
 end
 
+--狂暴50334 激怒5229 猛虎9846 50212 50213
+function wc.getBuffTime(...)
+	local buffs = {}, i, v
+	for i, v in ipairs{...} do
+		buffs[v] = true;
+	end
+	i = 1
+	while UnitBuff('player', i) do
+		if buffs[select(1, UnitBuff('player', i))] or buffs[select(10, UnitBuff('player', i))] then
+			local _, _, _, _, duration, expirationTime = UnitBuff("player", i)
+     		return expirationTime - GetTime()
+		end
+		i = i + 1
+	end
+	return 0
+end
+
 function wc.getDebuff(...)
 	local debuffs = {}, i, v
 	for i, v in ipairs{...} do
@@ -147,8 +164,11 @@ function wc.enoughMana(cost)
 	return UnitPower('player', 0) >= cost
 end
 
+-- 清晰预兆 16870
+-- 猛虎 50213
+
 function wc.enoughEnergy(cost)
-	if wc.getBuff(16870) then
+	if (wc.getBuff(16870) and wc.getRage() < 25) or wc.getCoolDown(50213) < 2 then
 		return true
 	end
 	return wc.getEnergy() >= cost
@@ -163,4 +183,16 @@ function wc.needUnroot()
 	elseif select(2, GetUnitSpeed('player')) < 7 and not IsStealthed() then return true
 	else return false end
 	--todo dazed 眩晕 震荡射击
+end
+
+function wc.getComboPoint()
+	return GetComboPoints('player','target')
+end
+
+function wc.getCoolDown(spellID)
+	local cooldown, duration = GetSpellCooldown(spellID)
+	if cooldown == 0 then
+		return cooldown
+	end
+	return cooldown + duration - GetTime()
 end

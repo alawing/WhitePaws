@@ -1,7 +1,7 @@
 ## Interface: 30400
 ## Title: 白爪助手@project-version@
 ## Version: @project-version@
-## Author: NGA:alawing (失眠者白爪-辛迪加) NGA:cksky
+## Author: NGA:alawing (失眠者白爪-辛迪加) NGA:cksky NGA:weryis
 ## Notes: 白爪助手辅助插件
 ## SavedVariablesPerCharacter: originTrinket
 ## SavedVariablesPerCharacter: cancelQueue
